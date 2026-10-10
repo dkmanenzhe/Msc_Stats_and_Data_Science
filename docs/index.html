@@ -244,10 +244,10 @@ window.Quarto = {
 <div aria-describedby="fig-writers-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="quarto-layout-row">
 <div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: center;">
-<p><img src="images/writers_digits.png" class="img-fluid figure-img"></p>
+<p><img src="images/writers_01_10.png" class="img-fluid figure-img"></p>
 </div>
 <div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: center;">
-<p><img src="images/writers_digits_b.png" class="img-fluid figure-img"></p>
+<p><img src="images/writers_11_20.png" class="img-fluid figure-img"></p>
 </div>
 </div>
 </div>
@@ -276,8 +276,8 @@ Figure&nbsp;2: Writer 1 across sessions 1–5 (rows), replicate 1 (left); eight 
 </div>
 <p><strong>Between sessions and within a session.</strong> Across sessions (<a href="#fig-sessions" class="quarto-xref">Figure&nbsp;2</a>, left), writer 1’s style is recognisable but the proportions change: the zero is rounder in some sessions and flatter in others, and the two and four change width. Within one session (<a href="#fig-sessions" class="quarto-xref">Figure&nbsp;2</a>, right), replicates differ only by small shifts in outline, stroke position and brightness.</p>
 <p>To put numbers on these sources of variation, we measured three simple features for every image: ink (mean pixel value), height and width (number of rows and columns containing a pixel brighter than 50). <a href="#tbl-variation" class="quarto-xref">Table&nbsp;1</a> compares how much these features vary between writers, between the sessions of one writer, and between replicates within a session. In each case we computed the standard deviation (SD) separately for each digit and averaged over the digits.</p>
-<div class="cell" data-layout-align="center">
-<div id="tbl-variation" class="cell quarto-float quarto-figure quarto-figure-center anchored" data-layout-align="center">
+<div class="cell">
+<div id="tbl-variation" class="cell quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-tbl figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-variation-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Table&nbsp;1: Average standard deviation of simple image features at three levels.
@@ -333,12 +333,12 @@ Table&nbsp;1: Average standard deviation of simple image features at three level
 <p><strong>Prediction task.</strong> Given one digit image, predict which of the 20 writers wrote it. Only pixels are used as input; the digit and session labels are not given to the model. The response is coded 0–19 and one-hot encoded with <code>to_categorical()</code>, as in the CNN notes.</p>
 <p><strong>Splits.</strong> Training uses sessions 1–3, replicates 1–40 (12,000 images). Session 4 is the validation set, used to choose hyperparameters, and session 5 is the test set, used once for the chosen model (5,000 images each). We also held back replicates 41–50 from sessions 1–3 (3,000 images). These come from recordings the model has seen, but the images themselves were never used for training. We call them the <em>same-session check</em>. Section 4 explains why.</p>
 <p><strong>Model.</strong> The architecture follows the convolution, pooling and MLP structure in the notes. It has a 3-by-3 convolution with 32 filters and ReLU, followed by 2-by-2 max pooling, then a 3-by-3 convolution with 64 filters and ReLU, followed by 2-by-2 max pooling. The result is flattened and passed to a dense layer of 128 ReLU units, then dropout and a 20-unit softmax output. The model is compiled with categorical cross-entropy and the Adam optimiser and trained for a fixed 20 epochs with batch size 64, using session 4 as <code>validation_data</code>. The learning rate (0.0001) and dropout rate (0.5) were chosen on validation accuracy in Section 5.</p>
-<div class="cell" data-layout-align="center">
+<div class="cell">
 <div class="cell-output-display">
-<div id="fig-cnn-history" class="quarto-float quarto-figure quarto-figure-center anchored" data-fig-align="center" data-fig-pos="H">
+<div id="fig-cnn-history" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-cnn-history-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="STA5073Z_Assignment2_files/figure-html/fig-cnn-history-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" data-fig-pos="H" width="720">
+<img src="STA5073Z_Assignment2_files/figure-html/fig-cnn-history-1.png" class="img-fluid figure-img" width="720">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-cnn-history-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figure&nbsp;3: Training curves of the chosen CNN: accuracy (left) and cross-entropy loss (right) for the training sessions and the validation session.
@@ -349,8 +349,8 @@ Figure&nbsp;3: Training curves of the chosen CNN: accuracy (left) and cross-entr
 </div>
 <p>Training accuracy keeps rising towards 100% (and is 100.0% when the trained model predicts the training images without dropout). Validation accuracy levels off near 55% and validation loss is lowest at epoch 5 and rises after that. This is the overfitting pattern from the notes: the model keeps fitting the training sessions but stops improving on a new one.</p>
 <p><strong>Results.</strong> On the test session the model identifies the correct writer for <strong>56.1%</strong> of images (2806 of 5000), compared with 5% for random guessing among 20 writers. Test cross-entropy is 1.86. Validation accuracy was 55.1%, close to the test accuracy, so the choice of model did not flatter the test result.</p>
-<div class="cell" data-layout-align="center">
-<div id="tbl-cnn-digit" class="cell quarto-float quarto-figure quarto-figure-center anchored" data-layout-align="center">
+<div class="cell">
+<div id="tbl-cnn-digit" class="cell quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-tbl figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-cnn-digit-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Table&nbsp;2: CNN writer identification on the test session, by the digit shown.
@@ -405,12 +405,12 @@ Table&nbsp;2: CNN writer identification on the test session, by the digit shown.
 </div>
 </div>
 <p>By digit (<a href="#tbl-cnn-digit" class="quarto-xref">Table&nbsp;2</a>), the 3s identify their writer most often (66.5%) and the 2s least often (48.6%). These are all predictions from the same model, so the comparison shows how much writer information the model can extract from each digit.</p>
-<div class="cell" data-layout-align="center">
+<div class="cell">
 <div class="cell-output-display">
-<div id="fig-cnn-writer" class="quarto-float quarto-figure quarto-figure-center anchored" data-fig-align="center" data-fig-pos="H">
+<div id="fig-cnn-writer" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-cnn-writer-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="STA5073Z_Assignment2_files/figure-html/fig-cnn-writer-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" data-fig-pos="H" width="720">
+<img src="STA5073Z_Assignment2_files/figure-html/fig-cnn-writer-1.png" class="img-fluid figure-img" width="720">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-cnn-writer-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figure&nbsp;4: Left: test accuracy for each writer (dashed line: 5% chance). Right: confusion table of actual against predicted writer for the test session, as row percentages.
@@ -428,15 +428,15 @@ Figure&nbsp;4: Left: test accuracy for each writer (dashed line: 5% chance). Rig
 <p><span class="math display">\[L = yD^2 + (1-y)\max(0, 1 - D)^2,\]</span></p>
 <p>where <span class="math inline">\(y = 1\)</span> for a pair from the same writer and <span class="math inline">\(D\)</span> is the distance. Same-writer pairs are pulled together; different-writer pairs are pushed apart until they are at least the margin (1) apart. We used Adam (learning rate 0.001), batch size 64 and 20 epochs. Triplet loss would be an alternative: it compares an anchor with a positive and a negative image at once. We chose contrastive loss because it works directly with labelled pairs.</p>
 <p><strong>Constructing pairs.</strong> Writers are split <em>before</em> any pairs are made: 12 writers for training, 4 for validation (3, 7, 18 and 20) and 4 for testing (9, 14, 16 and 19). Within each group, <code>make_pairs()</code> from the notes picks a first image at random and then, with probability one half, a second image by the same writer (otherwise by a different writer in the same group); an image is never paired with itself. This gave 20,000 training pairs (50.3% same-writer), 4,000 validation pairs and 8,000 test pairs. Because partners are drawn from all of a writer’s images, pairs naturally mix same and different digits and same and different sessions.</p>
-<p><strong>Should pairs control for digit identity?</strong> If same-writer pairs usually showed the same digit and different-writer pairs did not, the network could learn “same digit” as a shortcut for “same writer”. Here the partner is chosen without regard to digit, so in the test set 20% of same-writer pairs and 20% of different-writer pairs show the same digit. Digit agreement therefore tells the network nothing about the label, and the network has to use style. Digit is still controlled at evaluation time: We report same-digit and different-digit pairs separately, and test each digit on its own (Section 6).</p>
+<p><strong>Should pairs control for digit identity?</strong> If same-writer pairs usually showed the same digit and different-writer pairs did not, the network could learn “same digit” as a shortcut for “same writer”. Here the partner is chosen without regard to digit, so in the test set 20% of same-writer pairs and 20% of different-writer pairs show the same digit. Digit agreement therefore tells the network nothing about the label, and the network has to use style. Digit is still controlled at evaluation time: we report same-digit and different-digit pairs separately, and test each digit on its own (Section 6).</p>
 <p>In the test set, 20% of same-writer pairs come from the same session, which allows the session comparison in Section 6. For the digit comparison we also built five extra test sets of 2,000 pairs each, one per digit, using only test-writer images of that digit.</p>
 <p><strong>Threshold and evaluation.</strong> The model outputs a distance, not a decision. As in the notes, we tried every observed validation distance as a threshold and chose the one with the highest balanced accuracy: the average of the accuracy on same-writer pairs and the accuracy on different-writer pairs. The chosen threshold is 0.606; a pair is called “same writer” if its distance is below it. The threshold was then fixed and applied to the test pairs.</p>
-<div class="cell" data-layout-align="center">
+<div class="cell">
 <div class="cell-output-display">
-<div id="fig-siamese-hist" class="quarto-float quarto-figure quarto-figure-center anchored" data-fig-align="center" data-fig-pos="H">
+<div id="fig-siamese-hist" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-siamese-hist-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="STA5073Z_Assignment2_files/figure-html/fig-siamese-hist-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" data-fig-pos="H" width="720">
+<img src="STA5073Z_Assignment2_files/figure-html/fig-siamese-hist-1.png" class="img-fluid figure-img" width="720">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-siamese-hist-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figure&nbsp;5: Left: contrastive loss by epoch. Right: test distances for same-writer and different-writer pairs, with the validation-chosen threshold.
@@ -445,8 +445,8 @@ Figure&nbsp;5: Left: contrastive loss by epoch. Right: test distances for same-w
 </div>
 </div>
 </div>
-<div class="cell" data-layout-align="center">
-<div id="tbl-siamese" class="cell quarto-float quarto-figure quarto-figure-center anchored" data-layout-align="center">
+<div class="cell">
+<div id="tbl-siamese" class="cell quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-tbl figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-siamese-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Table&nbsp;3: Test pairs (four unseen writers): actual against predicted.
@@ -480,12 +480,12 @@ Table&nbsp;3: Test pairs (four unseen writers): actual against predicted.
 </div>
 </div>
 <p>On the 8,000 test pairs from unseen writers, the network accepts 81.7% of same-writer pairs and correctly rejects 54.6% of different-writer pairs, giving a balanced accuracy of <strong>68.2%</strong> (chance is 50%). In practice, if the system is asked “did the same person write these two digits?” about two people it has never seen, it confirms a true match 82% of the time and wrongly links two different people 45% of the time. It is therefore much better at confirming genuine matches than at excluding different writers. The two distance distributions in <a href="#fig-siamese-hist" class="quarto-xref">Figure&nbsp;5</a> overlap heavily, which is why no threshold can avoid both kinds of error. On the validation writers the same threshold gave 81.4% balanced accuracy, 13 points higher than on the test writers. Section 4 explains this gap.</p>
-<div class="cell" data-layout-align="center">
+<div class="cell">
 <div class="cell-output-display">
-<div id="fig-siamese-examples" class="quarto-float quarto-figure quarto-figure-center anchored" data-fig-align="center" data-fig-pos="H">
+<div id="fig-siamese-examples" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-siamese-examples-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="STA5073Z_Assignment2_files/figure-html/fig-siamese-examples-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" data-fig-pos="H" width="700">
+<img src="STA5073Z_Assignment2_files/figure-html/fig-siamese-examples-1.png" class="img-fluid figure-img" width="700">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-siamese-examples-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figure&nbsp;6: Example test pairs in each outcome group, with their distances.
@@ -497,8 +497,8 @@ Figure&nbsp;6: Example test pairs in each outcome group, with their distances.
 </section>
 <section id="training-validation-and-test-strategy" class="level2">
 <h2 class="anchored" data-anchor-id="training-validation-and-test-strategy">4. Training, validation and test strategy</h2>
-<div class="cell" data-layout-align="center">
-<div id="tbl-splits" class="cell quarto-float quarto-figure quarto-figure-center anchored" data-layout-align="center">
+<div class="cell">
+<div id="tbl-splits" class="cell quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-tbl figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-splits-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Table&nbsp;4: Data splits.
@@ -585,8 +585,8 @@ Table&nbsp;4: Data splits.
 <section id="limited-hyperparameter-optimisation-cnn" class="level2">
 <h2 class="anchored" data-anchor-id="limited-hyperparameter-optimisation-cnn">5. Limited hyperparameter optimisation (CNN)</h2>
 <p>Following the deck-3 procedure, we trained the CNN for each combination of learning rate (0.001, 0.0001) and dropout rate (0.2, 0.5), with the same seed, architecture, data and 20 epochs, and chose the combination with the highest validation accuracy. To see how much of any difference is just training randomness, we then retrained the chosen configuration with three different seeds.</p>
-<div class="cell" data-layout-align="center">
-<div id="tbl-grid" class="cell quarto-float quarto-figure quarto-figure-center anchored" data-layout-align="center">
+<div class="cell">
+<div id="tbl-grid" class="cell quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-tbl figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-grid-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Table&nbsp;5: CNN grid search (validation = session 4). Configuration 4 has the highest validation accuracy.
@@ -658,12 +658,12 @@ Table&nbsp;5: CNN grid search (validation = session 4). Configuration 4 has the 
 </figure>
 </div>
 </div>
-<div class="cell" data-layout-align="center">
+<div class="cell">
 <div class="cell-output-display">
-<div id="fig-grid-curves" class="quarto-float quarto-figure quarto-figure-center anchored" data-fig-align="center" data-fig-pos="H">
+<div id="fig-grid-curves" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-grid-curves-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="STA5073Z_Assignment2_files/figure-html/fig-grid-curves-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" data-fig-pos="H" width="720">
+<img src="STA5073Z_Assignment2_files/figure-html/fig-grid-curves-1.png" class="img-fluid figure-img" width="720">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-grid-curves-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figure&nbsp;7: Validation accuracy (left) and validation loss (right) by epoch for the four configurations.
@@ -672,8 +672,8 @@ Figure&nbsp;7: Validation accuracy (left) and validation loss (right) by epoch f
 </div>
 </div>
 </div>
-<div class="cell" data-layout-align="center">
-<div id="tbl-seeds" class="cell quarto-float quarto-figure quarto-figure-center anchored" data-layout-align="center">
+<div class="cell">
+<div id="tbl-seeds" class="cell quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-tbl figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-seeds-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Table&nbsp;6: Chosen configuration retrained with different seeds.
@@ -718,8 +718,8 @@ Table&nbsp;6: Chosen configuration retrained with different seeds.
 <section id="comparison-and-discussion" class="level2">
 <h2 class="anchored" data-anchor-id="comparison-and-discussion">6. Comparison and discussion</h2>
 <p><strong>What each model answers.</strong> The CNN answers “which of these 20 known people wrote this digit?” (chance 5%); the Siamese network answers “were these two digits written by the same person?” for people it has never seen (chance 50%). Their accuracies are not on the same scale and should not be ranked against each other. They are complementary: the CNN needs examples of every writer in advance but names them; the Siamese network needs no enrolment but only compares.</p>
-<div class="cell" data-layout-align="center">
-<div id="tbl-digits" class="cell quarto-float quarto-figure quarto-figure-center anchored" data-layout-align="center">
+<div class="cell">
+<div id="tbl-digits" class="cell quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-tbl figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-digits-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Table&nbsp;7: Writer information by digit. CNN: test-session identification accuracy. Siamese: extra test sets of 2,000 same-digit pairs per digit from the unseen writers, at the validation-chosen threshold.
@@ -788,8 +788,8 @@ Table&nbsp;7: Writer information by digit. CNN: test-session identification accu
 </div>
 <p><strong>Which digits carry more writer information?</strong> Ranked from most to least informative, the CNN orders the digits 3, 0, 4, 1, 2 and the Siamese network orders them 0, 2, 3, 1, 4. Both models place digits 0 and 3 among their three best and digit 1 among their two weakest. This fits the images: a one is mostly a single vertical stroke with few places for style to show, whereas digits with curves give width, roundness and closure room to vary between writers. The models disagree most about digit 2. The Siamese network’s weakest digit is 4: it accepts 97% of same-writer pairs but rejects only 30% of different-writer pairs, so the four test writers’ 4s sit close together in the embedding. A digit’s ranking therefore depends on the model and on which writers are being compared, and only the broad pattern should be taken seriously.</p>
 <p>Comparing whole pairs makes the same point. On the main test set, same-writer pairs are accepted 87.8% of the time when both images show the same digit and 80.2% when they show different digits. A shared character makes style easier to compare, but the network still matches across digits well above chance, so some of what it learns is a general style (size, slant, stroke width) rather than the shape of one digit.</p>
-<div class="cell" data-layout-align="center">
-<div id="tbl-sessions" class="cell quarto-float quarto-figure quarto-figure-center anchored" data-layout-align="center">
+<div class="cell">
+<div id="tbl-sessions" class="cell quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-tbl figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-sessions-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Table&nbsp;8: Effect of recording session on performance.
@@ -867,13 +867,13 @@ Figure&nbsp;8: Writer 5 (left) and writer 13 (right) across their five sessions.
 <section id="appendix-a-code" class="level2">
 <h2 class="anchored" data-anchor-id="appendix-a-code">Appendix A: code</h2>
 <p>All results in this report come from the code below, which runs when the document is rendered. Methods follow the course notes (the CNN notes, slide decks 1–3 and the metric-learning notes).</p>
-<div class="cell" data-layout-align="center">
+<div class="cell">
 <details class="code-fold">
 <summary>Show the full analysis code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ---- Task 1: load and check the data; simple image summaries ----</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>handwriting <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="st">"data/handwriting.rds"</span>)</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>metadata <span class="ot">&lt;-</span> handwriting<span class="sc">$</span>metadata</span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>images <span class="ot">&lt;-</span> handwriting<span class="sc">$</span>images            <span class="co"># 25000 x 28 x 28 x 1, values 0-255</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Task 1: load the data, check it and draw example images</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>handwriting <span class="ot">=</span> <span class="fu">readRDS</span>(<span class="st">"data/handwriting.rds"</span>)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>metadata <span class="ot">=</span> handwriting<span class="sc">$</span>metadata</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>images <span class="ot">=</span> handwriting<span class="sc">$</span>images   <span class="co"># 25000 x 28 x 28 x 1, pixel values 0-255</span></span>
 <span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="fu">stopifnot</span>(</span>
 <span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">dim</span>(images)[<span class="dv">1</span>] <span class="sc">==</span> <span class="fu">nrow</span>(metadata),</span>
@@ -882,286 +882,292 @@ Figure&nbsp;8: Writer 5 (left) and writer 13 (right) across their five sessions.
 <span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>  <span class="sc">!</span><span class="fu">anyNA</span>(images), <span class="sc">!</span><span class="fu">anyNA</span>(metadata)</span>
 <span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="co"># Draw one 28 x 28 image the right way up</span></span>
-<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>draw_digit <span class="ot">&lt;-</span> <span class="cf">function</span>(i) {</span>
-<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>  a <span class="ot">&lt;-</span> images[i, , , <span class="dv">1</span>]</span>
-<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">image</span>(<span class="fu">t</span>(a[<span class="dv">28</span><span class="sc">:</span><span class="dv">1</span>, ]), <span class="at">col =</span> <span class="fu">gray</span>(<span class="fu">seq</span>(<span class="dv">0</span>, <span class="dv">1</span>, <span class="at">length.out =</span> <span class="dv">256</span>)),</span>
-<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>        <span class="at">zlim =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">255</span>), <span class="at">axes =</span> <span class="cn">FALSE</span>, <span class="at">asp =</span> <span class="dv">1</span>, <span class="at">useRaster =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>find_image <span class="ot">&lt;-</span> <span class="cf">function</span>(person, s, k, <span class="at">r =</span> <span class="dv">1</span>) {</span>
-<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">which</span>(metadata<span class="sc">$</span>person_id <span class="sc">==</span> person <span class="sc">&amp;</span> metadata<span class="sc">$</span>session <span class="sc">==</span> s <span class="sc">&amp;</span></span>
-<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>          metadata<span class="sc">$</span>digit <span class="sc">==</span> k <span class="sc">&amp;</span> metadata<span class="sc">$</span>replicate <span class="sc">==</span> r)</span>
-<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a><span class="co"># Grid of images with labels on the outer margins</span></span>
-<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>image_grid <span class="ot">&lt;-</span> <span class="cf">function</span>(file, index_matrix, row_labels, col_labels,</span>
-<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>                       <span class="at">width =</span> <span class="dv">900</span>, <span class="at">height =</span> <span class="dv">900</span>) {</span>
-<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>  <span class="fu">png</span>(file, <span class="at">width =</span> width, <span class="at">height =</span> height, <span class="at">res =</span> <span class="dv">150</span>)</span>
-<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a>  <span class="fu">par</span>(<span class="at">mfrow =</span> <span class="fu">dim</span>(index_matrix), <span class="at">mar =</span> <span class="fu">c</span>(<span class="fl">0.15</span>, <span class="fl">0.15</span>, <span class="fl">0.15</span>, <span class="fl">0.15</span>),</span>
-<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a>      <span class="at">oma =</span> <span class="fu">c</span>(<span class="fl">0.5</span>, <span class="fl">4.5</span>, <span class="fl">2.2</span>, <span class="fl">0.5</span>))</span>
-<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (r <span class="cf">in</span> <span class="fu">seq_len</span>(<span class="fu">nrow</span>(index_matrix))) {</span>
-<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> (cc <span class="cf">in</span> <span class="fu">seq_len</span>(<span class="fu">ncol</span>(index_matrix))) {</span>
-<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a>      <span class="fu">draw_digit</span>(index_matrix[r, cc])</span>
-<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a>      <span class="cf">if</span> (cc <span class="sc">==</span> <span class="dv">1</span>) <span class="fu">mtext</span>(row_labels[r], <span class="at">side =</span> <span class="dv">2</span>, <span class="at">line =</span> <span class="fl">0.4</span>, <span class="at">las =</span> <span class="dv">1</span>, <span class="at">cex =</span> <span class="fl">0.75</span>)</span>
-<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a>      <span class="cf">if</span> (r <span class="sc">==</span> <span class="dv">1</span>) <span class="fu">mtext</span>(col_labels[cc], <span class="at">side =</span> <span class="dv">3</span>, <span class="at">line =</span> <span class="fl">0.4</span>, <span class="at">cex =</span> <span class="fl">0.8</span>)</span>
-<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a>    }</span>
-<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a>  }</span>
-<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a>  <span class="fu">dev.off</span>()</span>
-<span id="cb1-37"><a href="#cb1-37" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb1-38"><a href="#cb1-38" aria-hidden="true" tabindex="-1"></a>sessions_figure <span class="ot">&lt;-</span> <span class="cf">function</span>(p) {</span>
-<span id="cb1-39"><a href="#cb1-39" aria-hidden="true" tabindex="-1"></a>  idx <span class="ot">&lt;-</span> <span class="fu">t</span>(<span class="fu">sapply</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>, <span class="cf">function</span>(s) <span class="fu">sapply</span>(<span class="dv">0</span><span class="sc">:</span><span class="dv">4</span>, <span class="cf">function</span>(k) <span class="fu">find_image</span>(p, s, k))))</span>
-<span id="cb1-40"><a href="#cb1-40" aria-hidden="true" tabindex="-1"></a>  file <span class="ot">&lt;-</span> <span class="fu">sprintf</span>(<span class="st">"images/sessions_writer_%02d.png"</span>, p)</span>
-<span id="cb1-41"><a href="#cb1-41" aria-hidden="true" tabindex="-1"></a>  <span class="fu">image_grid</span>(file, idx, <span class="fu">paste</span>(<span class="st">"Session"</span>, <span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>), <span class="fu">paste</span>(<span class="st">"Digit"</span>, <span class="dv">0</span><span class="sc">:</span><span class="dv">4</span>), <span class="dv">650</span>, <span class="dv">650</span>)</span>
-<span id="cb1-42"><a href="#cb1-42" aria-hidden="true" tabindex="-1"></a>  file</span>
-<span id="cb1-43"><a href="#cb1-43" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb1-44"><a href="#cb1-44" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-45"><a href="#cb1-45" aria-hidden="true" tabindex="-1"></a><span class="co"># (a) all 20 writers x 5 digits, session 1, replicate 1</span></span>
-<span id="cb1-46"><a href="#cb1-46" aria-hidden="true" tabindex="-1"></a>idx <span class="ot">&lt;-</span> <span class="fu">t</span>(<span class="fu">sapply</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">20</span>, <span class="cf">function</span>(p) <span class="fu">sapply</span>(<span class="dv">0</span><span class="sc">:</span><span class="dv">4</span>, <span class="cf">function</span>(k) <span class="fu">find_image</span>(p, <span class="dv">1</span>, k))))</span>
-<span id="cb1-47"><a href="#cb1-47" aria-hidden="true" tabindex="-1"></a><span class="fu">image_grid</span>(<span class="st">"images/writers_digits.png"</span>, idx[<span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>, ], <span class="fu">paste</span>(<span class="st">"Writer"</span>, <span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>),</span>
-<span id="cb1-48"><a href="#cb1-48" aria-hidden="true" tabindex="-1"></a>           <span class="fu">paste</span>(<span class="st">"Digit"</span>, <span class="dv">0</span><span class="sc">:</span><span class="dv">4</span>), <span class="at">width =</span> <span class="dv">650</span>, <span class="at">height =</span> <span class="dv">1250</span>)</span>
-<span id="cb1-49"><a href="#cb1-49" aria-hidden="true" tabindex="-1"></a><span class="fu">image_grid</span>(<span class="st">"images/writers_digits_b.png"</span>, idx[<span class="dv">11</span><span class="sc">:</span><span class="dv">20</span>, ], <span class="fu">paste</span>(<span class="st">"Writer"</span>, <span class="dv">11</span><span class="sc">:</span><span class="dv">20</span>),</span>
-<span id="cb1-50"><a href="#cb1-50" aria-hidden="true" tabindex="-1"></a>           <span class="fu">paste</span>(<span class="st">"Digit"</span>, <span class="dv">0</span><span class="sc">:</span><span class="dv">4</span>), <span class="at">width =</span> <span class="dv">650</span>, <span class="at">height =</span> <span class="dv">1250</span>)</span>
-<span id="cb1-51"><a href="#cb1-51" aria-hidden="true" tabindex="-1"></a><span class="co"># (b) writer 1 across sessions; (c) replicates within one session</span></span>
-<span id="cb1-52"><a href="#cb1-52" aria-hidden="true" tabindex="-1"></a><span class="fu">sessions_figure</span>(<span class="dv">1</span>)</span>
-<span id="cb1-53"><a href="#cb1-53" aria-hidden="true" tabindex="-1"></a>idx <span class="ot">&lt;-</span> <span class="fu">t</span>(<span class="fu">sapply</span>(<span class="dv">0</span><span class="sc">:</span><span class="dv">4</span>, <span class="cf">function</span>(k) <span class="fu">sapply</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">8</span>, <span class="cf">function</span>(r) <span class="fu">find_image</span>(<span class="dv">1</span>, <span class="dv">1</span>, k, r))))</span>
-<span id="cb1-54"><a href="#cb1-54" aria-hidden="true" tabindex="-1"></a><span class="fu">image_grid</span>(<span class="st">"images/within_session.png"</span>, idx, <span class="fu">paste</span>(<span class="st">"Digit"</span>, <span class="dv">0</span><span class="sc">:</span><span class="dv">4</span>),</span>
-<span id="cb1-55"><a href="#cb1-55" aria-hidden="true" tabindex="-1"></a>           <span class="fu">paste</span>(<span class="st">"Rep"</span>, <span class="dv">1</span><span class="sc">:</span><span class="dv">8</span>), <span class="at">width =</span> <span class="dv">1000</span>, <span class="at">height =</span> <span class="dv">650</span>)</span>
-<span id="cb1-56"><a href="#cb1-56" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-57"><a href="#cb1-57" aria-hidden="true" tabindex="-1"></a><span class="co"># (d) ink, height and width of every image</span></span>
-<span id="cb1-58"><a href="#cb1-58" aria-hidden="true" tabindex="-1"></a>summ <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
-<span id="cb1-59"><a href="#cb1-59" aria-hidden="true" tabindex="-1"></a>  metadata,</span>
-<span id="cb1-60"><a href="#cb1-60" aria-hidden="true" tabindex="-1"></a>  <span class="at">ink =</span> <span class="fu">apply</span>(images[, , , <span class="dv">1</span>], <span class="dv">1</span>, mean),</span>
-<span id="cb1-61"><a href="#cb1-61" aria-hidden="true" tabindex="-1"></a>  <span class="at">height =</span> <span class="fu">apply</span>(images[, , , <span class="dv">1</span>], <span class="dv">1</span>, <span class="cf">function</span>(a) <span class="fu">sum</span>(<span class="fu">apply</span>(a <span class="sc">&gt;</span> <span class="dv">50</span>, <span class="dv">1</span>, any))),</span>
-<span id="cb1-62"><a href="#cb1-62" aria-hidden="true" tabindex="-1"></a>  <span class="at">width =</span> <span class="fu">apply</span>(images[, , , <span class="dv">1</span>], <span class="dv">1</span>, <span class="cf">function</span>(a) <span class="fu">sum</span>(<span class="fu">apply</span>(a <span class="sc">&gt;</span> <span class="dv">50</span>, <span class="dv">2</span>, any))))</span>
-<span id="cb1-63"><a href="#cb1-63" aria-hidden="true" tabindex="-1"></a><span class="co"># ---- Tasks 2 and 5: CNN writer identification and grid search ----</span></span>
-<span id="cb1-64"><a href="#cb1-64" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(keras3)</span>
-<span id="cb1-65"><a href="#cb1-65" aria-hidden="true" tabindex="-1"></a><span class="fu">use_backend</span>(<span class="st">"tensorflow"</span>)</span>
-<span id="cb1-66"><a href="#cb1-66" aria-hidden="true" tabindex="-1"></a>EPOCHS <span class="ot">&lt;-</span> <span class="dv">20</span></span>
-<span id="cb1-67"><a href="#cb1-67" aria-hidden="true" tabindex="-1"></a>BATCH <span class="ot">&lt;-</span> <span class="dv">64</span></span>
-<span id="cb1-68"><a href="#cb1-68" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-69"><a href="#cb1-69" aria-hidden="true" tabindex="-1"></a>x <span class="ot">&lt;-</span> images <span class="sc">/</span> <span class="dv">255</span></span>
-<span id="cb1-70"><a href="#cb1-70" aria-hidden="true" tabindex="-1"></a>y <span class="ot">&lt;-</span> metadata<span class="sc">$</span>person_id <span class="sc">-</span> <span class="dv">1</span>            <span class="co"># classes 0, 1, ..., 19</span></span>
-<span id="cb1-71"><a href="#cb1-71" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-72"><a href="#cb1-72" aria-hidden="true" tabindex="-1"></a><span class="co"># Split by recording session</span></span>
-<span id="cb1-73"><a href="#cb1-73" aria-hidden="true" tabindex="-1"></a>train_rows <span class="ot">&lt;-</span> <span class="fu">which</span>(metadata<span class="sc">$</span>session <span class="sc">%in%</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">3</span> <span class="sc">&amp;</span> metadata<span class="sc">$</span>replicate <span class="sc">&lt;=</span> <span class="dv">40</span>)</span>
-<span id="cb1-74"><a href="#cb1-74" aria-hidden="true" tabindex="-1"></a>check_rows <span class="ot">&lt;-</span> <span class="fu">which</span>(metadata<span class="sc">$</span>session <span class="sc">%in%</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">3</span> <span class="sc">&amp;</span> metadata<span class="sc">$</span>replicate <span class="sc">&gt;</span> <span class="dv">40</span>)</span>
-<span id="cb1-75"><a href="#cb1-75" aria-hidden="true" tabindex="-1"></a>val_rows   <span class="ot">&lt;-</span> <span class="fu">which</span>(metadata<span class="sc">$</span>session <span class="sc">==</span> <span class="dv">4</span>)</span>
-<span id="cb1-76"><a href="#cb1-76" aria-hidden="true" tabindex="-1"></a>test_rows  <span class="ot">&lt;-</span> <span class="fu">which</span>(metadata<span class="sc">$</span>session <span class="sc">==</span> <span class="dv">5</span>)</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>find_image <span class="ot">=</span> <span class="cf">function</span>(writer, session, digit, <span class="at">replicate =</span> <span class="dv">1</span>) {</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">which</span>(metadata<span class="sc">$</span>person_id <span class="sc">==</span> writer <span class="sc">&amp;</span> metadata<span class="sc">$</span>session <span class="sc">==</span> session <span class="sc">&amp;</span></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>          metadata<span class="sc">$</span>digit <span class="sc">==</span> digit <span class="sc">&amp;</span> metadata<span class="sc">$</span>replicate <span class="sc">==</span> replicate)</span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a><span class="co"># Matrix of image numbers, one row per value of `rows` and one column per value of `cols`</span></span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>image_index <span class="ot">=</span> <span class="cf">function</span>(rows, cols, pick) {</span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">t</span>(<span class="fu">sapply</span>(rows, <span class="cf">function</span>(r) <span class="fu">sapply</span>(cols, <span class="cf">function</span>(cl) <span class="fu">pick</span>(r, cl))))</span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>draw_digit <span class="ot">=</span> <span class="cf">function</span>(i) {</span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>  pixels <span class="ot">=</span> images[i, , , <span class="dv">1</span>]</span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>  <span class="fu">image</span>(<span class="fu">t</span>(pixels[<span class="dv">28</span><span class="sc">:</span><span class="dv">1</span>, ]), <span class="at">col =</span> <span class="fu">gray</span>(<span class="fu">seq</span>(<span class="dv">0</span>, <span class="dv">1</span>, <span class="at">length.out =</span> <span class="dv">256</span>)),</span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>        <span class="at">zlim =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">255</span>), <span class="at">axes =</span> <span class="cn">FALSE</span>, <span class="at">asp =</span> <span class="dv">1</span>, <span class="at">useRaster =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a>image_grid <span class="ot">=</span> <span class="cf">function</span>(file, index, row_labels, col_labels, width, height) {</span>
+<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a>  <span class="fu">png</span>(file, <span class="at">width =</span> width, <span class="at">height =</span> height, <span class="at">res =</span> <span class="dv">150</span>)</span>
+<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a>  <span class="fu">par</span>(<span class="at">mfrow =</span> <span class="fu">dim</span>(index), <span class="at">mar =</span> <span class="fu">rep</span>(<span class="fl">0.15</span>, <span class="dv">4</span>), <span class="at">oma =</span> <span class="fu">c</span>(<span class="fl">0.5</span>, <span class="fl">4.5</span>, <span class="fl">2.2</span>, <span class="fl">0.5</span>))</span>
+<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (r <span class="cf">in</span> <span class="fu">seq_len</span>(<span class="fu">nrow</span>(index))) {</span>
+<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> (cl <span class="cf">in</span> <span class="fu">seq_len</span>(<span class="fu">ncol</span>(index))) {</span>
+<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a>      <span class="fu">draw_digit</span>(index[r, cl])</span>
+<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a>      <span class="cf">if</span> (cl <span class="sc">==</span> <span class="dv">1</span>) <span class="fu">mtext</span>(row_labels[r], <span class="at">side =</span> <span class="dv">2</span>, <span class="at">line =</span> <span class="fl">0.4</span>, <span class="at">las =</span> <span class="dv">1</span>, <span class="at">cex =</span> <span class="fl">0.75</span>)</span>
+<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a>      <span class="cf">if</span> (r <span class="sc">==</span> <span class="dv">1</span>) <span class="fu">mtext</span>(col_labels[cl], <span class="at">side =</span> <span class="dv">3</span>, <span class="at">line =</span> <span class="fl">0.4</span>, <span class="at">cex =</span> <span class="fl">0.8</span>)</span>
+<span id="cb1-37"><a href="#cb1-37" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb1-38"><a href="#cb1-38" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb1-39"><a href="#cb1-39" aria-hidden="true" tabindex="-1"></a>  <span class="fu">dev.off</span>()</span>
+<span id="cb1-40"><a href="#cb1-40" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb1-41"><a href="#cb1-41" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-42"><a href="#cb1-42" aria-hidden="true" tabindex="-1"></a><span class="co"># One writer's five sessions, replicate 1 of each digit</span></span>
+<span id="cb1-43"><a href="#cb1-43" aria-hidden="true" tabindex="-1"></a>sessions_figure <span class="ot">=</span> <span class="cf">function</span>(writer) {</span>
+<span id="cb1-44"><a href="#cb1-44" aria-hidden="true" tabindex="-1"></a>  file <span class="ot">=</span> <span class="fu">sprintf</span>(<span class="st">"images/sessions_writer_%02d.png"</span>, writer)</span>
+<span id="cb1-45"><a href="#cb1-45" aria-hidden="true" tabindex="-1"></a>  index <span class="ot">=</span> <span class="fu">image_index</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>, <span class="dv">0</span><span class="sc">:</span><span class="dv">4</span>, <span class="cf">function</span>(s, d) <span class="fu">find_image</span>(writer, s, d))</span>
+<span id="cb1-46"><a href="#cb1-46" aria-hidden="true" tabindex="-1"></a>  <span class="fu">image_grid</span>(file, index, <span class="fu">paste</span>(<span class="st">"Session"</span>, <span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>), <span class="fu">paste</span>(<span class="st">"Digit"</span>, <span class="dv">0</span><span class="sc">:</span><span class="dv">4</span>), <span class="dv">650</span>, <span class="dv">650</span>)</span>
+<span id="cb1-47"><a href="#cb1-47" aria-hidden="true" tabindex="-1"></a>  file</span>
+<span id="cb1-48"><a href="#cb1-48" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb1-49"><a href="#cb1-49" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-50"><a href="#cb1-50" aria-hidden="true" tabindex="-1"></a><span class="co"># All writers and digits from session 1, split into two images of ten writers</span></span>
+<span id="cb1-51"><a href="#cb1-51" aria-hidden="true" tabindex="-1"></a>index <span class="ot">=</span> <span class="fu">image_index</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">20</span>, <span class="dv">0</span><span class="sc">:</span><span class="dv">4</span>, <span class="cf">function</span>(w, d) <span class="fu">find_image</span>(w, <span class="dv">1</span>, d))</span>
+<span id="cb1-52"><a href="#cb1-52" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (first <span class="cf">in</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">11</span>)) {</span>
+<span id="cb1-53"><a href="#cb1-53" aria-hidden="true" tabindex="-1"></a>  writers <span class="ot">=</span> first<span class="sc">:</span>(first <span class="sc">+</span> <span class="dv">9</span>)</span>
+<span id="cb1-54"><a href="#cb1-54" aria-hidden="true" tabindex="-1"></a>  <span class="fu">image_grid</span>(<span class="fu">sprintf</span>(<span class="st">"images/writers_%02d_%02d.png"</span>, first, first <span class="sc">+</span> <span class="dv">9</span>), index[writers, ],</span>
+<span id="cb1-55"><a href="#cb1-55" aria-hidden="true" tabindex="-1"></a>             <span class="fu">paste</span>(<span class="st">"Writer"</span>, writers), <span class="fu">paste</span>(<span class="st">"Digit"</span>, <span class="dv">0</span><span class="sc">:</span><span class="dv">4</span>), <span class="dv">650</span>, <span class="dv">1250</span>)</span>
+<span id="cb1-56"><a href="#cb1-56" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb1-57"><a href="#cb1-57" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-58"><a href="#cb1-58" aria-hidden="true" tabindex="-1"></a><span class="fu">sessions_figure</span>(<span class="dv">1</span>)</span>
+<span id="cb1-59"><a href="#cb1-59" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-60"><a href="#cb1-60" aria-hidden="true" tabindex="-1"></a>index <span class="ot">=</span> <span class="fu">image_index</span>(<span class="dv">0</span><span class="sc">:</span><span class="dv">4</span>, <span class="dv">1</span><span class="sc">:</span><span class="dv">8</span>, <span class="cf">function</span>(d, r) <span class="fu">find_image</span>(<span class="dv">1</span>, <span class="dv">1</span>, d, r))</span>
+<span id="cb1-61"><a href="#cb1-61" aria-hidden="true" tabindex="-1"></a><span class="fu">image_grid</span>(<span class="st">"images/within_session.png"</span>, index, <span class="fu">paste</span>(<span class="st">"Digit"</span>, <span class="dv">0</span><span class="sc">:</span><span class="dv">4</span>),</span>
+<span id="cb1-62"><a href="#cb1-62" aria-hidden="true" tabindex="-1"></a>           <span class="fu">paste</span>(<span class="st">"Rep"</span>, <span class="dv">1</span><span class="sc">:</span><span class="dv">8</span>), <span class="dv">1000</span>, <span class="dv">650</span>)</span>
+<span id="cb1-63"><a href="#cb1-63" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-64"><a href="#cb1-64" aria-hidden="true" tabindex="-1"></a><span class="co"># Simple size measures: ink is the mean pixel value; height and width count the</span></span>
+<span id="cb1-65"><a href="#cb1-65" aria-hidden="true" tabindex="-1"></a><span class="co"># rows and columns that contain a pixel brighter than 50</span></span>
+<span id="cb1-66"><a href="#cb1-66" aria-hidden="true" tabindex="-1"></a>pixels <span class="ot">=</span> images[, , , <span class="dv">1</span>]</span>
+<span id="cb1-67"><a href="#cb1-67" aria-hidden="true" tabindex="-1"></a>inked <span class="ot">=</span> pixels <span class="sc">&gt;</span> <span class="dv">50</span></span>
+<span id="cb1-68"><a href="#cb1-68" aria-hidden="true" tabindex="-1"></a>summ <span class="ot">=</span> <span class="fu">data.frame</span>(</span>
+<span id="cb1-69"><a href="#cb1-69" aria-hidden="true" tabindex="-1"></a>  metadata,</span>
+<span id="cb1-70"><a href="#cb1-70" aria-hidden="true" tabindex="-1"></a>  <span class="at">ink =</span> <span class="fu">apply</span>(pixels, <span class="dv">1</span>, mean),</span>
+<span id="cb1-71"><a href="#cb1-71" aria-hidden="true" tabindex="-1"></a>  <span class="at">height =</span> <span class="fu">apply</span>(inked, <span class="dv">1</span>, <span class="cf">function</span>(a) <span class="fu">sum</span>(<span class="fu">rowSums</span>(a) <span class="sc">&gt;</span> <span class="dv">0</span>)),</span>
+<span id="cb1-72"><a href="#cb1-72" aria-hidden="true" tabindex="-1"></a>  <span class="at">width =</span> <span class="fu">apply</span>(inked, <span class="dv">1</span>, <span class="cf">function</span>(a) <span class="fu">sum</span>(<span class="fu">colSums</span>(a) <span class="sc">&gt;</span> <span class="dv">0</span>))</span>
+<span id="cb1-73"><a href="#cb1-73" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb1-74"><a href="#cb1-74" aria-hidden="true" tabindex="-1"></a><span class="co"># Tasks 2 and 5: CNN writer identification and the hyperparameter grid</span></span>
+<span id="cb1-75"><a href="#cb1-75" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(keras3)</span>
+<span id="cb1-76"><a href="#cb1-76" aria-hidden="true" tabindex="-1"></a><span class="fu">use_backend</span>(<span class="st">"tensorflow"</span>)</span>
 <span id="cb1-77"><a href="#cb1-77" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-78"><a href="#cb1-78" aria-hidden="true" tabindex="-1"></a>x_train <span class="ot">&lt;-</span> x[train_rows, , , , drop <span class="ot">=</span> <span class="cn">FALSE</span>]</span>
-<span id="cb1-79"><a href="#cb1-79" aria-hidden="true" tabindex="-1"></a>x_check <span class="ot">&lt;-</span> x[check_rows, , , , drop <span class="ot">=</span> <span class="cn">FALSE</span>]</span>
-<span id="cb1-80"><a href="#cb1-80" aria-hidden="true" tabindex="-1"></a>x_val   <span class="ot">&lt;-</span> x[val_rows, , , , drop <span class="ot">=</span> <span class="cn">FALSE</span>]</span>
-<span id="cb1-81"><a href="#cb1-81" aria-hidden="true" tabindex="-1"></a>x_test  <span class="ot">&lt;-</span> x[test_rows, , , , drop <span class="ot">=</span> <span class="cn">FALSE</span>]</span>
-<span id="cb1-82"><a href="#cb1-82" aria-hidden="true" tabindex="-1"></a>y_train <span class="ot">&lt;-</span> <span class="fu">to_categorical</span>(y[train_rows], <span class="dv">20</span>)</span>
-<span id="cb1-83"><a href="#cb1-83" aria-hidden="true" tabindex="-1"></a>y_val   <span class="ot">&lt;-</span> <span class="fu">to_categorical</span>(y[val_rows], <span class="dv">20</span>)</span>
-<span id="cb1-84"><a href="#cb1-84" aria-hidden="true" tabindex="-1"></a>y_test  <span class="ot">&lt;-</span> <span class="fu">to_categorical</span>(y[test_rows], <span class="dv">20</span>)</span>
-<span id="cb1-85"><a href="#cb1-85" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-86"><a href="#cb1-86" aria-hidden="true" tabindex="-1"></a><span class="fu">write.csv</span>(<span class="fu">data.frame</span>(<span class="at">split =</span> <span class="fu">c</span>(<span class="st">"training"</span>, <span class="st">"same-session check"</span>, <span class="st">"validation"</span>, <span class="st">"test"</span>),</span>
-<span id="cb1-87"><a href="#cb1-87" aria-hidden="true" tabindex="-1"></a>                     <span class="at">images =</span> <span class="fu">c</span>(<span class="fu">length</span>(train_rows), <span class="fu">length</span>(check_rows),</span>
-<span id="cb1-88"><a href="#cb1-88" aria-hidden="true" tabindex="-1"></a>                                <span class="fu">length</span>(val_rows), <span class="fu">length</span>(test_rows))),</span>
-<span id="cb1-89"><a href="#cb1-89" aria-hidden="true" tabindex="-1"></a>          <span class="st">"results/cnn_split_sizes.csv"</span>, <span class="at">row.names =</span> <span class="cn">FALSE</span>)</span>
-<span id="cb1-90"><a href="#cb1-90" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-91"><a href="#cb1-91" aria-hidden="true" tabindex="-1"></a>build_cnn <span class="ot">&lt;-</span> <span class="cf">function</span>(learning_rate, dropout_rate) {</span>
-<span id="cb1-92"><a href="#cb1-92" aria-hidden="true" tabindex="-1"></a>  input <span class="ot">&lt;-</span> <span class="fu">layer_input</span>(<span class="at">shape =</span> <span class="fu">c</span>(<span class="dv">28</span>, <span class="dv">28</span>, <span class="dv">1</span>))</span>
-<span id="cb1-93"><a href="#cb1-93" aria-hidden="true" tabindex="-1"></a>  output <span class="ot">&lt;-</span> input <span class="sc">%&gt;%</span></span>
-<span id="cb1-94"><a href="#cb1-94" aria-hidden="true" tabindex="-1"></a>    <span class="fu">layer_conv_2d</span>(<span class="at">filters =</span> <span class="dv">32</span>, <span class="at">kernel_size =</span> <span class="fu">c</span>(<span class="dv">3</span>, <span class="dv">3</span>), <span class="at">activation =</span> <span class="st">"relu"</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb1-95"><a href="#cb1-95" aria-hidden="true" tabindex="-1"></a>    <span class="fu">layer_max_pooling_2d</span>(<span class="at">pool_size =</span> <span class="fu">c</span>(<span class="dv">2</span>, <span class="dv">2</span>)) <span class="sc">%&gt;%</span></span>
-<span id="cb1-96"><a href="#cb1-96" aria-hidden="true" tabindex="-1"></a>    <span class="fu">layer_conv_2d</span>(<span class="at">filters =</span> <span class="dv">64</span>, <span class="at">kernel_size =</span> <span class="fu">c</span>(<span class="dv">3</span>, <span class="dv">3</span>), <span class="at">activation =</span> <span class="st">"relu"</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb1-97"><a href="#cb1-97" aria-hidden="true" tabindex="-1"></a>    <span class="fu">layer_max_pooling_2d</span>(<span class="at">pool_size =</span> <span class="fu">c</span>(<span class="dv">2</span>, <span class="dv">2</span>)) <span class="sc">%&gt;%</span></span>
-<span id="cb1-98"><a href="#cb1-98" aria-hidden="true" tabindex="-1"></a>    <span class="fu">layer_flatten</span>() <span class="sc">%&gt;%</span></span>
-<span id="cb1-99"><a href="#cb1-99" aria-hidden="true" tabindex="-1"></a>    <span class="fu">layer_dense</span>(<span class="at">units =</span> <span class="dv">128</span>, <span class="at">activation =</span> <span class="st">"relu"</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb1-100"><a href="#cb1-100" aria-hidden="true" tabindex="-1"></a>    <span class="fu">layer_dropout</span>(<span class="at">rate =</span> dropout_rate) <span class="sc">%&gt;%</span></span>
-<span id="cb1-101"><a href="#cb1-101" aria-hidden="true" tabindex="-1"></a>    <span class="fu">layer_dense</span>(<span class="at">units =</span> <span class="dv">20</span>, <span class="at">activation =</span> <span class="st">"softmax"</span>)</span>
-<span id="cb1-102"><a href="#cb1-102" aria-hidden="true" tabindex="-1"></a>  model <span class="ot">&lt;-</span> <span class="fu">keras_model</span>(<span class="at">inputs =</span> input, <span class="at">outputs =</span> output)</span>
-<span id="cb1-103"><a href="#cb1-103" aria-hidden="true" tabindex="-1"></a>  model <span class="sc">%&gt;%</span> <span class="fu">compile</span>(</span>
-<span id="cb1-104"><a href="#cb1-104" aria-hidden="true" tabindex="-1"></a>    <span class="at">loss =</span> <span class="st">"categorical_crossentropy"</span>,</span>
-<span id="cb1-105"><a href="#cb1-105" aria-hidden="true" tabindex="-1"></a>    <span class="at">optimizer =</span> <span class="fu">optimizer_adam</span>(<span class="at">learning_rate =</span> learning_rate),</span>
-<span id="cb1-106"><a href="#cb1-106" aria-hidden="true" tabindex="-1"></a>    <span class="at">metrics =</span> <span class="fu">c</span>(<span class="st">"accuracy"</span>)</span>
-<span id="cb1-107"><a href="#cb1-107" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb1-108"><a href="#cb1-108" aria-hidden="true" tabindex="-1"></a>  model</span>
-<span id="cb1-109"><a href="#cb1-109" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb1-110"><a href="#cb1-110" aria-hidden="true" tabindex="-1"></a>predicted_class <span class="ot">&lt;-</span> <span class="cf">function</span>(model, x_new) {</span>
-<span id="cb1-111"><a href="#cb1-111" aria-hidden="true" tabindex="-1"></a>  <span class="fu">max.col</span>(<span class="fu">predict</span>(model, x_new, <span class="at">verbose =</span> <span class="dv">0</span>)) <span class="sc">-</span> <span class="dv">1</span></span>
-<span id="cb1-112"><a href="#cb1-112" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb1-113"><a href="#cb1-113" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-114"><a href="#cb1-114" aria-hidden="true" tabindex="-1"></a><span class="co"># Grid search: choose the configuration with the best validation accuracy</span></span>
-<span id="cb1-115"><a href="#cb1-115" aria-hidden="true" tabindex="-1"></a>grid <span class="ot">&lt;-</span> <span class="fu">expand.grid</span>(<span class="at">learning_rate =</span> <span class="fu">c</span>(<span class="fl">0.001</span>, <span class="fl">0.0001</span>), <span class="at">dropout_rate =</span> <span class="fu">c</span>(<span class="fl">0.2</span>, <span class="fl">0.5</span>))</span>
-<span id="cb1-116"><a href="#cb1-116" aria-hidden="true" tabindex="-1"></a>grid<span class="sc">$</span>config <span class="ot">&lt;-</span> <span class="fu">seq_len</span>(<span class="fu">nrow</span>(grid))</span>
-<span id="cb1-117"><a href="#cb1-117" aria-hidden="true" tabindex="-1"></a>histories <span class="ot">&lt;-</span> <span class="fu">list</span>()</span>
-<span id="cb1-118"><a href="#cb1-118" aria-hidden="true" tabindex="-1"></a>grid_results <span class="ot">&lt;-</span> <span class="fu">list</span>()</span>
-<span id="cb1-119"><a href="#cb1-119" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (i <span class="cf">in</span> grid<span class="sc">$</span>config) {</span>
-<span id="cb1-120"><a href="#cb1-120" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set_random_seed</span>(<span class="dv">123</span>)</span>
-<span id="cb1-121"><a href="#cb1-121" aria-hidden="true" tabindex="-1"></a>  model <span class="ot">&lt;-</span> <span class="fu">build_cnn</span>(grid<span class="sc">$</span>learning_rate[i], grid<span class="sc">$</span>dropout_rate[i])</span>
-<span id="cb1-122"><a href="#cb1-122" aria-hidden="true" tabindex="-1"></a>  history <span class="ot">&lt;-</span> model <span class="sc">%&gt;%</span> <span class="fu">fit</span>(</span>
-<span id="cb1-123"><a href="#cb1-123" aria-hidden="true" tabindex="-1"></a>    x_train, y_train,</span>
-<span id="cb1-124"><a href="#cb1-124" aria-hidden="true" tabindex="-1"></a>    <span class="at">epochs =</span> EPOCHS, <span class="at">batch_size =</span> BATCH, <span class="at">shuffle =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb1-125"><a href="#cb1-125" aria-hidden="true" tabindex="-1"></a>    <span class="at">validation_data =</span> <span class="fu">list</span>(x_val, y_val),</span>
-<span id="cb1-126"><a href="#cb1-126" aria-hidden="true" tabindex="-1"></a>    <span class="at">verbose =</span> <span class="dv">0</span></span>
-<span id="cb1-127"><a href="#cb1-127" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb1-128"><a href="#cb1-128" aria-hidden="true" tabindex="-1"></a>  histories[[i]] <span class="ot">&lt;-</span> history<span class="sc">$</span>metrics</span>
-<span id="cb1-129"><a href="#cb1-129" aria-hidden="true" tabindex="-1"></a>  grid_results[[i]] <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
-<span id="cb1-130"><a href="#cb1-130" aria-hidden="true" tabindex="-1"></a>    <span class="at">config =</span> i,</span>
-<span id="cb1-131"><a href="#cb1-131" aria-hidden="true" tabindex="-1"></a>    <span class="at">learning_rate =</span> grid<span class="sc">$</span>learning_rate[i],</span>
-<span id="cb1-132"><a href="#cb1-132" aria-hidden="true" tabindex="-1"></a>    <span class="at">dropout_rate =</span> grid<span class="sc">$</span>dropout_rate[i],</span>
-<span id="cb1-133"><a href="#cb1-133" aria-hidden="true" tabindex="-1"></a>    <span class="at">train_accuracy =</span> <span class="fu">mean</span>(<span class="fu">predicted_class</span>(model, x_train) <span class="sc">==</span> y[train_rows]),</span>
-<span id="cb1-134"><a href="#cb1-134" aria-hidden="true" tabindex="-1"></a>    <span class="at">check_accuracy =</span> <span class="fu">mean</span>(<span class="fu">predicted_class</span>(model, x_check) <span class="sc">==</span> y[check_rows]),</span>
-<span id="cb1-135"><a href="#cb1-135" aria-hidden="true" tabindex="-1"></a>    <span class="at">val_accuracy =</span> <span class="fu">mean</span>(<span class="fu">predicted_class</span>(model, x_val) <span class="sc">==</span> y[val_rows]),</span>
-<span id="cb1-136"><a href="#cb1-136" aria-hidden="true" tabindex="-1"></a>    <span class="at">val_loss =</span> <span class="fu">tail</span>(history<span class="sc">$</span>metrics<span class="sc">$</span>val_loss, <span class="dv">1</span>),</span>
-<span id="cb1-137"><a href="#cb1-137" aria-hidden="true" tabindex="-1"></a>    <span class="at">best_val_accuracy_epoch =</span> <span class="fu">which.max</span>(history<span class="sc">$</span>metrics<span class="sc">$</span>val_accuracy),</span>
-<span id="cb1-138"><a href="#cb1-138" aria-hidden="true" tabindex="-1"></a>    <span class="at">lowest_val_loss_epoch =</span> <span class="fu">which.min</span>(history<span class="sc">$</span>metrics<span class="sc">$</span>val_loss)</span>
+<span id="cb1-78"><a href="#cb1-78" aria-hidden="true" tabindex="-1"></a>epochs <span class="ot">=</span> <span class="dv">20</span></span>
+<span id="cb1-79"><a href="#cb1-79" aria-hidden="true" tabindex="-1"></a>batch_size <span class="ot">=</span> <span class="dv">64</span></span>
+<span id="cb1-80"><a href="#cb1-80" aria-hidden="true" tabindex="-1"></a>x <span class="ot">=</span> images <span class="sc">/</span> <span class="dv">255</span></span>
+<span id="cb1-81"><a href="#cb1-81" aria-hidden="true" tabindex="-1"></a>y <span class="ot">=</span> metadata<span class="sc">$</span>person_id <span class="sc">-</span> <span class="dv">1</span>   <span class="co"># Keras needs classes numbered from 0</span></span>
+<span id="cb1-82"><a href="#cb1-82" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-83"><a href="#cb1-83" aria-hidden="true" tabindex="-1"></a><span class="co"># Sessions 1-3 are for training, session 4 for validation and session 5 for testing.</span></span>
+<span id="cb1-84"><a href="#cb1-84" aria-hidden="true" tabindex="-1"></a><span class="co"># Replicates 41-50 of sessions 1-3 are held back to check accuracy on sessions the</span></span>
+<span id="cb1-85"><a href="#cb1-85" aria-hidden="true" tabindex="-1"></a><span class="co"># model has already seen.</span></span>
+<span id="cb1-86"><a href="#cb1-86" aria-hidden="true" tabindex="-1"></a>rows <span class="ot">=</span> <span class="fu">list</span>(</span>
+<span id="cb1-87"><a href="#cb1-87" aria-hidden="true" tabindex="-1"></a>  <span class="at">train =</span> <span class="fu">which</span>(metadata<span class="sc">$</span>session <span class="sc">%in%</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">3</span> <span class="sc">&amp;</span> metadata<span class="sc">$</span>replicate <span class="sc">&lt;=</span> <span class="dv">40</span>),</span>
+<span id="cb1-88"><a href="#cb1-88" aria-hidden="true" tabindex="-1"></a>  <span class="at">check =</span> <span class="fu">which</span>(metadata<span class="sc">$</span>session <span class="sc">%in%</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">3</span> <span class="sc">&amp;</span> metadata<span class="sc">$</span>replicate <span class="sc">&gt;</span> <span class="dv">40</span>),</span>
+<span id="cb1-89"><a href="#cb1-89" aria-hidden="true" tabindex="-1"></a>  <span class="at">val   =</span> <span class="fu">which</span>(metadata<span class="sc">$</span>session <span class="sc">==</span> <span class="dv">4</span>),</span>
+<span id="cb1-90"><a href="#cb1-90" aria-hidden="true" tabindex="-1"></a>  <span class="at">test  =</span> <span class="fu">which</span>(metadata<span class="sc">$</span>session <span class="sc">==</span> <span class="dv">5</span>)</span>
+<span id="cb1-91"><a href="#cb1-91" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb1-92"><a href="#cb1-92" aria-hidden="true" tabindex="-1"></a>x_split <span class="ot">=</span> <span class="fu">lapply</span>(rows, <span class="cf">function</span>(r) x[r, , , , <span class="at">drop =</span> <span class="cn">FALSE</span>])</span>
+<span id="cb1-93"><a href="#cb1-93" aria-hidden="true" tabindex="-1"></a>y_split <span class="ot">=</span> <span class="fu">lapply</span>(rows, <span class="cf">function</span>(r) <span class="fu">to_categorical</span>(y[r], <span class="dv">20</span>))</span>
+<span id="cb1-94"><a href="#cb1-94" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-95"><a href="#cb1-95" aria-hidden="true" tabindex="-1"></a><span class="fu">write.csv</span>(<span class="fu">data.frame</span>(<span class="at">split =</span> <span class="fu">c</span>(<span class="st">"training"</span>, <span class="st">"same-session check"</span>, <span class="st">"validation"</span>, <span class="st">"test"</span>),</span>
+<span id="cb1-96"><a href="#cb1-96" aria-hidden="true" tabindex="-1"></a>                     <span class="at">images =</span> <span class="fu">lengths</span>(rows)),</span>
+<span id="cb1-97"><a href="#cb1-97" aria-hidden="true" tabindex="-1"></a>          <span class="st">"results/cnn_split_sizes.csv"</span>, <span class="at">row.names =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb1-98"><a href="#cb1-98" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-99"><a href="#cb1-99" aria-hidden="true" tabindex="-1"></a>build_cnn <span class="ot">=</span> <span class="cf">function</span>(learning_rate, dropout_rate) {</span>
+<span id="cb1-100"><a href="#cb1-100" aria-hidden="true" tabindex="-1"></a>  input <span class="ot">=</span> <span class="fu">layer_input</span>(<span class="at">shape =</span> <span class="fu">c</span>(<span class="dv">28</span>, <span class="dv">28</span>, <span class="dv">1</span>))</span>
+<span id="cb1-101"><a href="#cb1-101" aria-hidden="true" tabindex="-1"></a>  output <span class="ot">=</span> input <span class="sc">|&gt;</span></span>
+<span id="cb1-102"><a href="#cb1-102" aria-hidden="true" tabindex="-1"></a>    <span class="fu">layer_conv_2d</span>(<span class="at">filters =</span> <span class="dv">32</span>, <span class="at">kernel_size =</span> <span class="fu">c</span>(<span class="dv">3</span>, <span class="dv">3</span>), <span class="at">activation =</span> <span class="st">"relu"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb1-103"><a href="#cb1-103" aria-hidden="true" tabindex="-1"></a>    <span class="fu">layer_max_pooling_2d</span>(<span class="at">pool_size =</span> <span class="fu">c</span>(<span class="dv">2</span>, <span class="dv">2</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb1-104"><a href="#cb1-104" aria-hidden="true" tabindex="-1"></a>    <span class="fu">layer_conv_2d</span>(<span class="at">filters =</span> <span class="dv">64</span>, <span class="at">kernel_size =</span> <span class="fu">c</span>(<span class="dv">3</span>, <span class="dv">3</span>), <span class="at">activation =</span> <span class="st">"relu"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb1-105"><a href="#cb1-105" aria-hidden="true" tabindex="-1"></a>    <span class="fu">layer_max_pooling_2d</span>(<span class="at">pool_size =</span> <span class="fu">c</span>(<span class="dv">2</span>, <span class="dv">2</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb1-106"><a href="#cb1-106" aria-hidden="true" tabindex="-1"></a>    <span class="fu">layer_flatten</span>() <span class="sc">|&gt;</span></span>
+<span id="cb1-107"><a href="#cb1-107" aria-hidden="true" tabindex="-1"></a>    <span class="fu">layer_dense</span>(<span class="at">units =</span> <span class="dv">128</span>, <span class="at">activation =</span> <span class="st">"relu"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb1-108"><a href="#cb1-108" aria-hidden="true" tabindex="-1"></a>    <span class="fu">layer_dropout</span>(<span class="at">rate =</span> dropout_rate) <span class="sc">|&gt;</span></span>
+<span id="cb1-109"><a href="#cb1-109" aria-hidden="true" tabindex="-1"></a>    <span class="fu">layer_dense</span>(<span class="at">units =</span> <span class="dv">20</span>, <span class="at">activation =</span> <span class="st">"softmax"</span>)</span>
+<span id="cb1-110"><a href="#cb1-110" aria-hidden="true" tabindex="-1"></a>  model <span class="ot">=</span> <span class="fu">keras_model</span>(<span class="at">inputs =</span> input, <span class="at">outputs =</span> output)</span>
+<span id="cb1-111"><a href="#cb1-111" aria-hidden="true" tabindex="-1"></a>  model <span class="sc">|&gt;</span> <span class="fu">compile</span>(</span>
+<span id="cb1-112"><a href="#cb1-112" aria-hidden="true" tabindex="-1"></a>    <span class="at">loss =</span> <span class="st">"categorical_crossentropy"</span>,</span>
+<span id="cb1-113"><a href="#cb1-113" aria-hidden="true" tabindex="-1"></a>    <span class="at">optimizer =</span> <span class="fu">optimizer_adam</span>(<span class="at">learning_rate =</span> learning_rate),</span>
+<span id="cb1-114"><a href="#cb1-114" aria-hidden="true" tabindex="-1"></a>    <span class="at">metrics =</span> <span class="fu">c</span>(<span class="st">"accuracy"</span>)</span>
+<span id="cb1-115"><a href="#cb1-115" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb1-116"><a href="#cb1-116" aria-hidden="true" tabindex="-1"></a>  model</span>
+<span id="cb1-117"><a href="#cb1-117" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb1-118"><a href="#cb1-118" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-119"><a href="#cb1-119" aria-hidden="true" tabindex="-1"></a>predict_writer <span class="ot">=</span> <span class="cf">function</span>(model, split) {</span>
+<span id="cb1-120"><a href="#cb1-120" aria-hidden="true" tabindex="-1"></a>  <span class="fu">max.col</span>(<span class="fu">predict</span>(model, x_split[[split]], <span class="at">verbose =</span> <span class="dv">0</span>)) <span class="sc">-</span> <span class="dv">1</span></span>
+<span id="cb1-121"><a href="#cb1-121" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb1-122"><a href="#cb1-122" aria-hidden="true" tabindex="-1"></a>accuracy <span class="ot">=</span> <span class="cf">function</span>(model, split) <span class="fu">mean</span>(<span class="fu">predict_writer</span>(model, split) <span class="sc">==</span> y[rows[[split]]])</span>
+<span id="cb1-123"><a href="#cb1-123" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-124"><a href="#cb1-124" aria-hidden="true" tabindex="-1"></a><span class="co"># Grid search: every configuration starts from the same seed and is compared on</span></span>
+<span id="cb1-125"><a href="#cb1-125" aria-hidden="true" tabindex="-1"></a><span class="co"># validation accuracy</span></span>
+<span id="cb1-126"><a href="#cb1-126" aria-hidden="true" tabindex="-1"></a>grid <span class="ot">=</span> <span class="fu">expand.grid</span>(<span class="at">learning_rate =</span> <span class="fu">c</span>(<span class="fl">0.001</span>, <span class="fl">0.0001</span>), <span class="at">dropout_rate =</span> <span class="fu">c</span>(<span class="fl">0.2</span>, <span class="fl">0.5</span>))</span>
+<span id="cb1-127"><a href="#cb1-127" aria-hidden="true" tabindex="-1"></a>grid<span class="sc">$</span>config <span class="ot">=</span> <span class="fu">seq_len</span>(<span class="fu">nrow</span>(grid))</span>
+<span id="cb1-128"><a href="#cb1-128" aria-hidden="true" tabindex="-1"></a>grid[<span class="fu">c</span>(<span class="st">"train_accuracy"</span>, <span class="st">"check_accuracy"</span>, <span class="st">"val_accuracy"</span>, <span class="st">"val_loss"</span>,</span>
+<span id="cb1-129"><a href="#cb1-129" aria-hidden="true" tabindex="-1"></a>       <span class="st">"lowest_val_loss_epoch"</span>)] <span class="ot">=</span> <span class="cn">NA</span></span>
+<span id="cb1-130"><a href="#cb1-130" aria-hidden="true" tabindex="-1"></a>histories <span class="ot">=</span> <span class="fu">list</span>()</span>
+<span id="cb1-131"><a href="#cb1-131" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-132"><a href="#cb1-132" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (i <span class="cf">in</span> grid<span class="sc">$</span>config) {</span>
+<span id="cb1-133"><a href="#cb1-133" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set_random_seed</span>(<span class="dv">123</span>)</span>
+<span id="cb1-134"><a href="#cb1-134" aria-hidden="true" tabindex="-1"></a>  model <span class="ot">=</span> <span class="fu">build_cnn</span>(grid<span class="sc">$</span>learning_rate[i], grid<span class="sc">$</span>dropout_rate[i])</span>
+<span id="cb1-135"><a href="#cb1-135" aria-hidden="true" tabindex="-1"></a>  history <span class="ot">=</span> model <span class="sc">|&gt;</span> <span class="fu">fit</span>(</span>
+<span id="cb1-136"><a href="#cb1-136" aria-hidden="true" tabindex="-1"></a>    x_split<span class="sc">$</span>train, y_split<span class="sc">$</span>train,</span>
+<span id="cb1-137"><a href="#cb1-137" aria-hidden="true" tabindex="-1"></a>    <span class="at">epochs =</span> epochs, <span class="at">batch_size =</span> batch_size, <span class="at">shuffle =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb1-138"><a href="#cb1-138" aria-hidden="true" tabindex="-1"></a>    <span class="at">validation_data =</span> <span class="fu">list</span>(x_split<span class="sc">$</span>val, y_split<span class="sc">$</span>val), <span class="at">verbose =</span> <span class="dv">0</span></span>
 <span id="cb1-139"><a href="#cb1-139" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb1-140"><a href="#cb1-140" aria-hidden="true" tabindex="-1"></a>  <span class="fu">save_model</span>(model, <span class="fu">sprintf</span>(<span class="st">"models/cnn_config_%d.keras"</span>, i), <span class="at">overwrite =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb1-141"><a href="#cb1-141" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb1-142"><a href="#cb1-142" aria-hidden="true" tabindex="-1"></a>grid_results <span class="ot">&lt;-</span> <span class="fu">do.call</span>(rbind, grid_results)</span>
-<span id="cb1-143"><a href="#cb1-143" aria-hidden="true" tabindex="-1"></a><span class="fu">write.csv</span>(grid_results, <span class="st">"results/cnn_grid.csv"</span>, <span class="at">row.names =</span> <span class="cn">FALSE</span>)</span>
-<span id="cb1-144"><a href="#cb1-144" aria-hidden="true" tabindex="-1"></a><span class="fu">saveRDS</span>(histories, <span class="st">"results/cnn_histories.rds"</span>)</span>
-<span id="cb1-145"><a href="#cb1-145" aria-hidden="true" tabindex="-1"></a>best <span class="ot">&lt;-</span> grid_results<span class="sc">$</span>config[<span class="fu">which.max</span>(grid_results<span class="sc">$</span>val_accuracy)]</span>
-<span id="cb1-146"><a href="#cb1-146" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-147"><a href="#cb1-147" aria-hidden="true" tabindex="-1"></a><span class="co"># How much does validation accuracy move when only the seed changes?</span></span>
-<span id="cb1-148"><a href="#cb1-148" aria-hidden="true" tabindex="-1"></a>seed_results <span class="ot">&lt;-</span> <span class="fu">list</span>()</span>
-<span id="cb1-149"><a href="#cb1-149" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (s <span class="cf">in</span> <span class="fu">c</span>(<span class="dv">123</span>, <span class="dv">456</span>, <span class="dv">789</span>)) {</span>
-<span id="cb1-150"><a href="#cb1-150" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set_random_seed</span>(s)</span>
-<span id="cb1-151"><a href="#cb1-151" aria-hidden="true" tabindex="-1"></a>  m <span class="ot">&lt;-</span> <span class="fu">build_cnn</span>(grid<span class="sc">$</span>learning_rate[best], grid<span class="sc">$</span>dropout_rate[best])</span>
-<span id="cb1-152"><a href="#cb1-152" aria-hidden="true" tabindex="-1"></a>  m <span class="sc">%&gt;%</span> <span class="fu">fit</span>(x_train, y_train, <span class="at">epochs =</span> EPOCHS, <span class="at">batch_size =</span> BATCH,</span>
-<span id="cb1-153"><a href="#cb1-153" aria-hidden="true" tabindex="-1"></a>            <span class="at">shuffle =</span> <span class="cn">TRUE</span>, <span class="at">verbose =</span> <span class="dv">0</span>)</span>
-<span id="cb1-154"><a href="#cb1-154" aria-hidden="true" tabindex="-1"></a>  seed_results[[<span class="fu">length</span>(seed_results) <span class="sc">+</span> <span class="dv">1</span>]] <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
-<span id="cb1-155"><a href="#cb1-155" aria-hidden="true" tabindex="-1"></a>    <span class="at">seed =</span> s, <span class="at">val_accuracy =</span> <span class="fu">mean</span>(<span class="fu">predicted_class</span>(m, x_val) <span class="sc">==</span> y[val_rows]))</span>
-<span id="cb1-156"><a href="#cb1-156" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb1-157"><a href="#cb1-157" aria-hidden="true" tabindex="-1"></a><span class="fu">write.csv</span>(<span class="fu">do.call</span>(rbind, seed_results), <span class="st">"results/cnn_seed_check.csv"</span>, <span class="at">row.names =</span> <span class="cn">FALSE</span>)</span>
-<span id="cb1-158"><a href="#cb1-158" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-159"><a href="#cb1-159" aria-hidden="true" tabindex="-1"></a><span class="co"># Evaluate the chosen model once on the test session</span></span>
-<span id="cb1-160"><a href="#cb1-160" aria-hidden="true" tabindex="-1"></a>model <span class="ot">&lt;-</span> <span class="fu">load_model</span>(<span class="fu">sprintf</span>(<span class="st">"models/cnn_config_%d.keras"</span>, best))</span>
-<span id="cb1-161"><a href="#cb1-161" aria-hidden="true" tabindex="-1"></a>test_eval <span class="ot">&lt;-</span> model <span class="sc">%&gt;%</span> <span class="fu">evaluate</span>(x_test, y_test, <span class="at">verbose =</span> <span class="dv">0</span>)</span>
-<span id="cb1-162"><a href="#cb1-162" aria-hidden="true" tabindex="-1"></a>cnn_predictions <span class="ot">&lt;-</span> <span class="cf">function</span>(rows, x_new, split) {</span>
-<span id="cb1-163"><a href="#cb1-163" aria-hidden="true" tabindex="-1"></a>  <span class="fu">data.frame</span>(<span class="at">image_id =</span> metadata<span class="sc">$</span>image_id[rows], <span class="at">split =</span> split,</span>
-<span id="cb1-164"><a href="#cb1-164" aria-hidden="true" tabindex="-1"></a>             <span class="at">actual_writer =</span> metadata<span class="sc">$</span>person_id[rows],</span>
-<span id="cb1-165"><a href="#cb1-165" aria-hidden="true" tabindex="-1"></a>             <span class="at">predicted_writer =</span> <span class="fu">predicted_class</span>(model, x_new) <span class="sc">+</span> <span class="dv">1</span>,</span>
-<span id="cb1-166"><a href="#cb1-166" aria-hidden="true" tabindex="-1"></a>             <span class="at">digit =</span> metadata<span class="sc">$</span>digit[rows], <span class="at">session =</span> metadata<span class="sc">$</span>session[rows],</span>
-<span id="cb1-167"><a href="#cb1-167" aria-hidden="true" tabindex="-1"></a>             <span class="at">replicate =</span> metadata<span class="sc">$</span>replicate[rows])</span>
-<span id="cb1-168"><a href="#cb1-168" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb1-169"><a href="#cb1-169" aria-hidden="true" tabindex="-1"></a>cnn_pred <span class="ot">&lt;-</span> <span class="fu">rbind</span>(<span class="fu">cnn_predictions</span>(check_rows, x_check, <span class="st">"same-session check"</span>),</span>
-<span id="cb1-170"><a href="#cb1-170" aria-hidden="true" tabindex="-1"></a>                  <span class="fu">cnn_predictions</span>(val_rows, x_val, <span class="st">"validation"</span>),</span>
-<span id="cb1-171"><a href="#cb1-171" aria-hidden="true" tabindex="-1"></a>                  <span class="fu">cnn_predictions</span>(test_rows, x_test, <span class="st">"test"</span>))</span>
-<span id="cb1-172"><a href="#cb1-172" aria-hidden="true" tabindex="-1"></a>cnn_pred<span class="sc">$</span>correct <span class="ot">&lt;-</span> cnn_pred<span class="sc">$</span>actual_writer <span class="sc">==</span> cnn_pred<span class="sc">$</span>predicted_writer</span>
-<span id="cb1-173"><a href="#cb1-173" aria-hidden="true" tabindex="-1"></a><span class="fu">write.csv</span>(cnn_pred, <span class="st">"results/cnn_predictions.csv"</span>, <span class="at">row.names =</span> <span class="cn">FALSE</span>)</span>
-<span id="cb1-174"><a href="#cb1-174" aria-hidden="true" tabindex="-1"></a><span class="fu">write.csv</span>(<span class="fu">data.frame</span>(<span class="at">selected_config =</span> best, <span class="at">test_loss =</span> test_eval<span class="sc">$</span>loss,</span>
-<span id="cb1-175"><a href="#cb1-175" aria-hidden="true" tabindex="-1"></a>                     <span class="at">test_accuracy =</span> test_eval<span class="sc">$</span>accuracy),</span>
-<span id="cb1-176"><a href="#cb1-176" aria-hidden="true" tabindex="-1"></a>          <span class="st">"results/cnn_test_evaluate.csv"</span>, <span class="at">row.names =</span> <span class="cn">FALSE</span>)</span>
-<span id="cb1-177"><a href="#cb1-177" aria-hidden="true" tabindex="-1"></a><span class="co"># ---- Task 3: Siamese network (metric-learning notes) ----</span></span>
-<span id="cb1-178"><a href="#cb1-178" aria-hidden="true" tabindex="-1"></a>labels <span class="ot">&lt;-</span> metadata<span class="sc">$</span>person_id</span>
-<span id="cb1-179"><a href="#cb1-179" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-180"><a href="#cb1-180" aria-hidden="true" tabindex="-1"></a><span class="co"># Split WRITERS before making pairs</span></span>
-<span id="cb1-181"><a href="#cb1-181" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">2026</span>)</span>
-<span id="cb1-182"><a href="#cb1-182" aria-hidden="true" tabindex="-1"></a>writers <span class="ot">&lt;-</span> <span class="fu">sample</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">20</span>)</span>
-<span id="cb1-183"><a href="#cb1-183" aria-hidden="true" tabindex="-1"></a>train_writers <span class="ot">&lt;-</span> <span class="fu">sort</span>(writers[<span class="dv">1</span><span class="sc">:</span><span class="dv">12</span>])</span>
-<span id="cb1-184"><a href="#cb1-184" aria-hidden="true" tabindex="-1"></a>val_writers   <span class="ot">&lt;-</span> <span class="fu">sort</span>(writers[<span class="dv">13</span><span class="sc">:</span><span class="dv">16</span>])</span>
-<span id="cb1-185"><a href="#cb1-185" aria-hidden="true" tabindex="-1"></a>test_writers  <span class="ot">&lt;-</span> <span class="fu">sort</span>(writers[<span class="dv">17</span><span class="sc">:</span><span class="dv">20</span>])</span>
-<span id="cb1-186"><a href="#cb1-186" aria-hidden="true" tabindex="-1"></a>train_ids <span class="ot">&lt;-</span> <span class="fu">which</span>(labels <span class="sc">%in%</span> train_writers)</span>
-<span id="cb1-187"><a href="#cb1-187" aria-hidden="true" tabindex="-1"></a>val_ids   <span class="ot">&lt;-</span> <span class="fu">which</span>(labels <span class="sc">%in%</span> val_writers)</span>
-<span id="cb1-188"><a href="#cb1-188" aria-hidden="true" tabindex="-1"></a>test_ids  <span class="ot">&lt;-</span> <span class="fu">which</span>(labels <span class="sc">%in%</span> test_writers)</span>
-<span id="cb1-189"><a href="#cb1-189" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-190"><a href="#cb1-190" aria-hidden="true" tabindex="-1"></a><span class="co"># Partner image has the same writer about half the time</span></span>
-<span id="cb1-191"><a href="#cb1-191" aria-hidden="true" tabindex="-1"></a>make_pairs <span class="ot">&lt;-</span> <span class="cf">function</span>(ids, n, <span class="at">class_labels =</span> labels) {</span>
-<span id="cb1-192"><a href="#cb1-192" aria-hidden="true" tabindex="-1"></a>  a <span class="ot">&lt;-</span> <span class="fu">sample</span>(ids, n, <span class="at">replace =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb1-193"><a href="#cb1-193" aria-hidden="true" tabindex="-1"></a>  b <span class="ot">&lt;-</span> <span class="fu">vapply</span>(a, <span class="cf">function</span>(i) {</span>
-<span id="cb1-194"><a href="#cb1-194" aria-hidden="true" tabindex="-1"></a>    same <span class="ot">&lt;-</span> <span class="fu">runif</span>(<span class="dv">1</span>) <span class="sc">&lt;</span> .<span class="dv">5</span></span>
-<span id="cb1-195"><a href="#cb1-195" aria-hidden="true" tabindex="-1"></a>    pool <span class="ot">&lt;-</span> ids[class_labels[ids] <span class="sc">==</span> class_labels[i]]</span>
-<span id="cb1-196"><a href="#cb1-196" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (<span class="sc">!</span>same) pool <span class="ot">&lt;-</span> ids[class_labels[ids] <span class="sc">!=</span> class_labels[i]]</span>
-<span id="cb1-197"><a href="#cb1-197" aria-hidden="true" tabindex="-1"></a>    <span class="fu">sample</span>(<span class="fu">setdiff</span>(pool, i), <span class="dv">1</span>)</span>
-<span id="cb1-198"><a href="#cb1-198" aria-hidden="true" tabindex="-1"></a>  }, <span class="fu">integer</span>(<span class="dv">1</span>))</span>
-<span id="cb1-199"><a href="#cb1-199" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cbind</span>(a, b)</span>
-<span id="cb1-200"><a href="#cb1-200" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb1-201"><a href="#cb1-201" aria-hidden="true" tabindex="-1"></a>make_batch <span class="ot">&lt;-</span> <span class="cf">function</span>(p, <span class="at">images =</span> x, <span class="at">class_labels =</span> labels) {</span>
-<span id="cb1-202"><a href="#cb1-202" aria-hidden="true" tabindex="-1"></a>  y <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="fu">as.integer</span>(class_labels[p[, <span class="dv">1</span>]] <span class="sc">==</span> class_labels[p[, <span class="dv">2</span>]]), <span class="at">ncol =</span> <span class="dv">1</span>)</span>
-<span id="cb1-203"><a href="#cb1-203" aria-hidden="true" tabindex="-1"></a>  <span class="fu">list</span>(<span class="at">left =</span> images[p[, <span class="dv">1</span>], , , , <span class="at">drop =</span> <span class="cn">FALSE</span>],</span>
-<span id="cb1-204"><a href="#cb1-204" aria-hidden="true" tabindex="-1"></a>       <span class="at">right =</span> images[p[, <span class="dv">2</span>], , , , <span class="at">drop =</span> <span class="cn">FALSE</span>], <span class="at">y =</span> y)</span>
-<span id="cb1-205"><a href="#cb1-205" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb1-206"><a href="#cb1-206" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-207"><a href="#cb1-207" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">25</span>)</span>
-<span id="cb1-208"><a href="#cb1-208" aria-hidden="true" tabindex="-1"></a>train_pairs <span class="ot">&lt;-</span> <span class="fu">make_pairs</span>(train_ids, <span class="dv">20000</span>)</span>
-<span id="cb1-209"><a href="#cb1-209" aria-hidden="true" tabindex="-1"></a>val_pairs   <span class="ot">&lt;-</span> <span class="fu">make_pairs</span>(val_ids, <span class="dv">4000</span>)</span>
-<span id="cb1-210"><a href="#cb1-210" aria-hidden="true" tabindex="-1"></a>test_pairs  <span class="ot">&lt;-</span> <span class="fu">make_pairs</span>(test_ids, <span class="dv">8000</span>)</span>
-<span id="cb1-211"><a href="#cb1-211" aria-hidden="true" tabindex="-1"></a>train <span class="ot">&lt;-</span> <span class="fu">make_batch</span>(train_pairs)</span>
-<span id="cb1-212"><a href="#cb1-212" aria-hidden="true" tabindex="-1"></a>valid <span class="ot">&lt;-</span> <span class="fu">make_batch</span>(val_pairs)</span>
-<span id="cb1-213"><a href="#cb1-213" aria-hidden="true" tabindex="-1"></a>test  <span class="ot">&lt;-</span> <span class="fu">make_batch</span>(test_pairs)</span>
-<span id="cb1-214"><a href="#cb1-214" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-215"><a href="#cb1-215" aria-hidden="true" tabindex="-1"></a><span class="co"># Shared encoder: one image -&gt; 32-number embedding</span></span>
-<span id="cb1-216"><a href="#cb1-216" aria-hidden="true" tabindex="-1"></a>image <span class="ot">&lt;-</span> <span class="fu">layer_input</span>(<span class="at">shape =</span> <span class="fu">c</span>(<span class="dv">28</span>, <span class="dv">28</span>, <span class="dv">1</span>))</span>
-<span id="cb1-217"><a href="#cb1-217" aria-hidden="true" tabindex="-1"></a>z <span class="ot">&lt;-</span> image <span class="sc">|&gt;</span></span>
-<span id="cb1-218"><a href="#cb1-218" aria-hidden="true" tabindex="-1"></a>  <span class="fu">layer_conv_2d</span>(<span class="dv">32</span>, <span class="dv">3</span>, <span class="at">activation =</span> <span class="st">"relu"</span>) <span class="sc">|&gt;</span></span>
-<span id="cb1-219"><a href="#cb1-219" aria-hidden="true" tabindex="-1"></a>  <span class="fu">layer_max_pooling_2d</span>(<span class="dv">2</span>) <span class="sc">|&gt;</span></span>
-<span id="cb1-220"><a href="#cb1-220" aria-hidden="true" tabindex="-1"></a>  <span class="fu">layer_conv_2d</span>(<span class="dv">64</span>, <span class="dv">3</span>, <span class="at">activation =</span> <span class="st">"relu"</span>) <span class="sc">|&gt;</span></span>
-<span id="cb1-221"><a href="#cb1-221" aria-hidden="true" tabindex="-1"></a>  <span class="fu">layer_global_average_pooling_2d</span>() <span class="sc">|&gt;</span></span>
-<span id="cb1-222"><a href="#cb1-222" aria-hidden="true" tabindex="-1"></a>  <span class="fu">layer_dense</span>(<span class="dv">32</span>)</span>
-<span id="cb1-223"><a href="#cb1-223" aria-hidden="true" tabindex="-1"></a><span class="fu">set_random_seed</span>(<span class="dv">123</span>)</span>
-<span id="cb1-224"><a href="#cb1-224" aria-hidden="true" tabindex="-1"></a>encoder <span class="ot">&lt;-</span> <span class="fu">keras_model</span>(image, z)</span>
-<span id="cb1-225"><a href="#cb1-225" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-226"><a href="#cb1-226" aria-hidden="true" tabindex="-1"></a><span class="co"># The same encoder on both images; output = Euclidean distance</span></span>
-<span id="cb1-227"><a href="#cb1-227" aria-hidden="true" tabindex="-1"></a>a <span class="ot">&lt;-</span> <span class="fu">layer_input</span>(<span class="at">shape =</span> <span class="fu">c</span>(<span class="dv">28</span>, <span class="dv">28</span>, <span class="dv">1</span>))</span>
-<span id="cb1-228"><a href="#cb1-228" aria-hidden="true" tabindex="-1"></a>b <span class="ot">&lt;-</span> <span class="fu">layer_input</span>(<span class="at">shape =</span> <span class="fu">c</span>(<span class="dv">28</span>, <span class="dv">28</span>, <span class="dv">1</span>))</span>
-<span id="cb1-229"><a href="#cb1-229" aria-hidden="true" tabindex="-1"></a>distance <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="fu">encoder</span>(a), <span class="fu">encoder</span>(b)) <span class="sc">|&gt;</span></span>
-<span id="cb1-230"><a href="#cb1-230" aria-hidden="true" tabindex="-1"></a>  <span class="fu">layer_lambda</span>(<span class="at">f =</span> <span class="cf">function</span>(z) {</span>
-<span id="cb1-231"><a href="#cb1-231" aria-hidden="true" tabindex="-1"></a>    <span class="fu">op_sqrt</span>(<span class="fu">op_sum</span>(<span class="fu">op_square</span>(z[[<span class="dv">1</span>]] <span class="sc">-</span> z[[<span class="dv">2</span>]]), <span class="at">axis =</span> <span class="dv">2</span>, <span class="at">keepdims =</span> <span class="cn">TRUE</span>) <span class="sc">+</span> <span class="fl">1e-7</span>)</span>
-<span id="cb1-232"><a href="#cb1-232" aria-hidden="true" tabindex="-1"></a>  })</span>
-<span id="cb1-233"><a href="#cb1-233" aria-hidden="true" tabindex="-1"></a>siamese <span class="ot">&lt;-</span> <span class="fu">keras_model</span>(<span class="fu">list</span>(a, b), distance)</span>
-<span id="cb1-234"><a href="#cb1-234" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-235"><a href="#cb1-235" aria-hidden="true" tabindex="-1"></a>contrastive_loss <span class="ot">&lt;-</span> <span class="cf">function</span>(y, d) {</span>
-<span id="cb1-236"><a href="#cb1-236" aria-hidden="true" tabindex="-1"></a>  <span class="fu">op_mean</span>(y <span class="sc">*</span> <span class="fu">op_square</span>(d) <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">-</span> y) <span class="sc">*</span> <span class="fu">op_square</span>(<span class="fu">op_maximum</span>(<span class="dv">1</span> <span class="sc">-</span> d, <span class="dv">0</span>)))</span>
-<span id="cb1-237"><a href="#cb1-237" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb1-238"><a href="#cb1-238" aria-hidden="true" tabindex="-1"></a>siamese <span class="sc">|&gt;</span> <span class="fu">compile</span>(<span class="at">optimizer =</span> <span class="fu">optimizer_adam</span>(<span class="fl">1e-3</span>), <span class="at">loss =</span> contrastive_loss)</span>
-<span id="cb1-239"><a href="#cb1-239" aria-hidden="true" tabindex="-1"></a>siamese_history <span class="ot">&lt;-</span> siamese <span class="sc">|&gt;</span> <span class="fu">fit</span>(</span>
-<span id="cb1-240"><a href="#cb1-240" aria-hidden="true" tabindex="-1"></a>  <span class="fu">list</span>(train<span class="sc">$</span>left, train<span class="sc">$</span>right), train<span class="sc">$</span>y,</span>
-<span id="cb1-241"><a href="#cb1-241" aria-hidden="true" tabindex="-1"></a>  <span class="at">validation_data =</span> <span class="fu">list</span>(<span class="fu">list</span>(valid<span class="sc">$</span>left, valid<span class="sc">$</span>right), valid<span class="sc">$</span>y),</span>
-<span id="cb1-242"><a href="#cb1-242" aria-hidden="true" tabindex="-1"></a>  <span class="at">epochs =</span> <span class="dv">20</span>, <span class="at">batch_size =</span> BATCH, <span class="at">verbose =</span> <span class="dv">0</span></span>
-<span id="cb1-243"><a href="#cb1-243" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb1-244"><a href="#cb1-244" aria-hidden="true" tabindex="-1"></a><span class="fu">saveRDS</span>(siamese_history<span class="sc">$</span>metrics, <span class="st">"results/siamese_history.rds"</span>)</span>
-<span id="cb1-245"><a href="#cb1-245" aria-hidden="true" tabindex="-1"></a><span class="fu">save_model_weights</span>(siamese, <span class="st">"models/siamese.weights.h5"</span>, <span class="at">overwrite =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb1-246"><a href="#cb1-246" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-247"><a href="#cb1-247" aria-hidden="true" tabindex="-1"></a><span class="co"># Threshold: best validation balanced accuracy, "same" if distance &lt; threshold</span></span>
-<span id="cb1-248"><a href="#cb1-248" aria-hidden="true" tabindex="-1"></a>valid_distance <span class="ot">&lt;-</span> <span class="fu">as.numeric</span>(<span class="fu">predict</span>(siamese, <span class="fu">list</span>(valid<span class="sc">$</span>left, valid<span class="sc">$</span>right), <span class="at">verbose =</span> <span class="dv">0</span>))</span>
-<span id="cb1-249"><a href="#cb1-249" aria-hidden="true" tabindex="-1"></a>valid_same <span class="ot">&lt;-</span> <span class="fu">as.logical</span>(valid<span class="sc">$</span>y[, <span class="dv">1</span>])</span>
-<span id="cb1-250"><a href="#cb1-250" aria-hidden="true" tabindex="-1"></a>balanced_accuracy_at <span class="ot">&lt;-</span> <span class="cf">function</span>(cut, <span class="at">d =</span> valid_distance, <span class="at">same =</span> valid_same) {</span>
-<span id="cb1-251"><a href="#cb1-251" aria-hidden="true" tabindex="-1"></a>  predicts_same <span class="ot">&lt;-</span> d <span class="sc">&lt;</span> cut</span>
-<span id="cb1-252"><a href="#cb1-252" aria-hidden="true" tabindex="-1"></a>  (<span class="fu">mean</span>(predicts_same[same]) <span class="sc">+</span> <span class="fu">mean</span>(<span class="sc">!</span>predicts_same[<span class="sc">!</span>same])) <span class="sc">/</span> <span class="dv">2</span></span>
-<span id="cb1-253"><a href="#cb1-253" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb1-254"><a href="#cb1-254" aria-hidden="true" tabindex="-1"></a>threshold_candidates <span class="ot">&lt;-</span> <span class="fu">sort</span>(<span class="fu">unique</span>(valid_distance))</span>
-<span id="cb1-255"><a href="#cb1-255" aria-hidden="true" tabindex="-1"></a>threshold_scores <span class="ot">&lt;-</span> <span class="fu">vapply</span>(threshold_candidates, balanced_accuracy_at, <span class="fu">numeric</span>(<span class="dv">1</span>))</span>
-<span id="cb1-256"><a href="#cb1-256" aria-hidden="true" tabindex="-1"></a>threshold <span class="ot">&lt;-</span> threshold_candidates[<span class="fu">which.max</span>(threshold_scores)]</span>
-<span id="cb1-257"><a href="#cb1-257" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-258"><a href="#cb1-258" aria-hidden="true" tabindex="-1"></a>pair_table <span class="ot">&lt;-</span> <span class="cf">function</span>(p, batch, d, set) {</span>
-<span id="cb1-259"><a href="#cb1-259" aria-hidden="true" tabindex="-1"></a>  <span class="fu">data.frame</span>(<span class="at">set =</span> set, <span class="at">left =</span> p[, <span class="dv">1</span>], <span class="at">right =</span> p[, <span class="dv">2</span>],</span>
-<span id="cb1-260"><a href="#cb1-260" aria-hidden="true" tabindex="-1"></a>             <span class="at">same_writer =</span> batch<span class="sc">$</span>y[, <span class="dv">1</span>], <span class="at">distance =</span> d,</span>
-<span id="cb1-261"><a href="#cb1-261" aria-hidden="true" tabindex="-1"></a>             <span class="at">predicted_same =</span> <span class="fu">as.integer</span>(d <span class="sc">&lt;</span> threshold),</span>
-<span id="cb1-262"><a href="#cb1-262" aria-hidden="true" tabindex="-1"></a>             <span class="at">writer_left =</span> labels[p[, <span class="dv">1</span>]], <span class="at">writer_right =</span> labels[p[, <span class="dv">2</span>]],</span>
-<span id="cb1-263"><a href="#cb1-263" aria-hidden="true" tabindex="-1"></a>             <span class="at">digit_left =</span> metadata<span class="sc">$</span>digit[p[, <span class="dv">1</span>]], <span class="at">digit_right =</span> metadata<span class="sc">$</span>digit[p[, <span class="dv">2</span>]],</span>
-<span id="cb1-264"><a href="#cb1-264" aria-hidden="true" tabindex="-1"></a>             <span class="at">session_left =</span> metadata<span class="sc">$</span>session[p[, <span class="dv">1</span>]],</span>
-<span id="cb1-265"><a href="#cb1-265" aria-hidden="true" tabindex="-1"></a>             <span class="at">session_right =</span> metadata<span class="sc">$</span>session[p[, <span class="dv">2</span>]])</span>
-<span id="cb1-266"><a href="#cb1-266" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb1-267"><a href="#cb1-267" aria-hidden="true" tabindex="-1"></a>test_distance <span class="ot">&lt;-</span> <span class="fu">as.numeric</span>(<span class="fu">predict</span>(siamese, <span class="fu">list</span>(test<span class="sc">$</span>left, test<span class="sc">$</span>right), <span class="at">verbose =</span> <span class="dv">0</span>))</span>
-<span id="cb1-268"><a href="#cb1-268" aria-hidden="true" tabindex="-1"></a>siamese_pairs <span class="ot">&lt;-</span> <span class="fu">rbind</span>(<span class="fu">pair_table</span>(val_pairs, valid, valid_distance, <span class="st">"validation"</span>),</span>
-<span id="cb1-269"><a href="#cb1-269" aria-hidden="true" tabindex="-1"></a>                       <span class="fu">pair_table</span>(test_pairs, test, test_distance, <span class="st">"test"</span>))</span>
-<span id="cb1-270"><a href="#cb1-270" aria-hidden="true" tabindex="-1"></a><span class="co"># Extra test sets: one per digit, pairs built only from that digit's images</span></span>
-<span id="cb1-271"><a href="#cb1-271" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (k <span class="cf">in</span> <span class="dv">0</span><span class="sc">:</span><span class="dv">4</span>) {</span>
-<span id="cb1-272"><a href="#cb1-272" aria-hidden="true" tabindex="-1"></a>  ids_k <span class="ot">&lt;-</span> test_ids[metadata<span class="sc">$</span>digit[test_ids] <span class="sc">==</span> k]</span>
-<span id="cb1-273"><a href="#cb1-273" aria-hidden="true" tabindex="-1"></a>  p_k <span class="ot">&lt;-</span> <span class="fu">make_pairs</span>(ids_k, <span class="dv">2000</span>)</span>
-<span id="cb1-274"><a href="#cb1-274" aria-hidden="true" tabindex="-1"></a>  b_k <span class="ot">&lt;-</span> <span class="fu">make_batch</span>(p_k)</span>
-<span id="cb1-275"><a href="#cb1-275" aria-hidden="true" tabindex="-1"></a>  d_k <span class="ot">&lt;-</span> <span class="fu">as.numeric</span>(<span class="fu">predict</span>(siamese, <span class="fu">list</span>(b_k<span class="sc">$</span>left, b_k<span class="sc">$</span>right), <span class="at">verbose =</span> <span class="dv">0</span>))</span>
-<span id="cb1-276"><a href="#cb1-276" aria-hidden="true" tabindex="-1"></a>  siamese_pairs <span class="ot">&lt;-</span> <span class="fu">rbind</span>(siamese_pairs, <span class="fu">pair_table</span>(p_k, b_k, d_k, <span class="fu">paste</span>(<span class="st">"digit"</span>, k)))</span>
-<span id="cb1-277"><a href="#cb1-277" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb1-278"><a href="#cb1-278" aria-hidden="true" tabindex="-1"></a><span class="fu">write.csv</span>(siamese_pairs, <span class="st">"results/siamese_pairs.csv"</span>, <span class="at">row.names =</span> <span class="cn">FALSE</span>)</span>
-<span id="cb1-279"><a href="#cb1-279" aria-hidden="true" tabindex="-1"></a><span class="fu">saveRDS</span>(<span class="fu">list</span>(<span class="at">train_writers =</span> train_writers, <span class="at">val_writers =</span> val_writers,</span>
-<span id="cb1-280"><a href="#cb1-280" aria-hidden="true" tabindex="-1"></a>             <span class="at">test_writers =</span> test_writers, <span class="at">threshold =</span> threshold,</span>
-<span id="cb1-281"><a href="#cb1-281" aria-hidden="true" tabindex="-1"></a>             <span class="at">val_balanced_accuracy =</span> <span class="fu">max</span>(threshold_scores),</span>
-<span id="cb1-282"><a href="#cb1-282" aria-hidden="true" tabindex="-1"></a>             <span class="at">n_train_pairs =</span> <span class="fu">nrow</span>(train_pairs), <span class="at">train_same_share =</span> <span class="fu">mean</span>(train<span class="sc">$</span>y)),</span>
-<span id="cb1-283"><a href="#cb1-283" aria-hidden="true" tabindex="-1"></a>        <span class="st">"results/siamese_design.rds"</span>)</span>
-<span id="cb1-284"><a href="#cb1-284" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-285"><a href="#cb1-285" aria-hidden="true" tabindex="-1"></a><span class="co"># Software versions used for training</span></span>
-<span id="cb1-286"><a href="#cb1-286" aria-hidden="true" tabindex="-1"></a>tf <span class="ot">&lt;-</span> reticulate<span class="sc">::</span><span class="fu">import</span>(<span class="st">"tensorflow"</span>)</span>
-<span id="cb1-287"><a href="#cb1-287" aria-hidden="true" tabindex="-1"></a><span class="fu">writeLines</span>(<span class="fu">c</span>(R.version.string,</span>
-<span id="cb1-288"><a href="#cb1-288" aria-hidden="true" tabindex="-1"></a>             <span class="fu">paste</span>(<span class="st">"keras3"</span>, <span class="fu">as.character</span>(<span class="fu">packageVersion</span>(<span class="st">"keras3"</span>))),</span>
-<span id="cb1-289"><a href="#cb1-289" aria-hidden="true" tabindex="-1"></a>             <span class="fu">paste</span>(<span class="st">"TensorFlow"</span>, tf<span class="sc">$</span><span class="st">`</span><span class="at">__version__</span><span class="st">`</span>),</span>
-<span id="cb1-290"><a href="#cb1-290" aria-hidden="true" tabindex="-1"></a>             <span class="fu">paste</span>(<span class="st">"Keras"</span>, tf<span class="sc">$</span>keras<span class="sc">$</span><span class="st">`</span><span class="at">__version__</span><span class="st">`</span>)),</span>
-<span id="cb1-291"><a href="#cb1-291" aria-hidden="true" tabindex="-1"></a>           <span class="st">"results/versions.txt"</span>)</span>
-<span id="cb1-292"><a href="#cb1-292" aria-hidden="true" tabindex="-1"></a><span class="fu">writeLines</span>(<span class="fu">capture.output</span>(<span class="fu">sessionInfo</span>()), <span class="st">"results/session_info.txt"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb1-140"><a href="#cb1-140" aria-hidden="true" tabindex="-1"></a>  histories[[i]] <span class="ot">=</span> history<span class="sc">$</span>metrics</span>
+<span id="cb1-141"><a href="#cb1-141" aria-hidden="true" tabindex="-1"></a>  grid<span class="sc">$</span>train_accuracy[i] <span class="ot">=</span> <span class="fu">accuracy</span>(model, <span class="st">"train"</span>)</span>
+<span id="cb1-142"><a href="#cb1-142" aria-hidden="true" tabindex="-1"></a>  grid<span class="sc">$</span>check_accuracy[i] <span class="ot">=</span> <span class="fu">accuracy</span>(model, <span class="st">"check"</span>)</span>
+<span id="cb1-143"><a href="#cb1-143" aria-hidden="true" tabindex="-1"></a>  grid<span class="sc">$</span>val_accuracy[i] <span class="ot">=</span> <span class="fu">accuracy</span>(model, <span class="st">"val"</span>)</span>
+<span id="cb1-144"><a href="#cb1-144" aria-hidden="true" tabindex="-1"></a>  grid<span class="sc">$</span>val_loss[i] <span class="ot">=</span> <span class="fu">tail</span>(history<span class="sc">$</span>metrics<span class="sc">$</span>val_loss, <span class="dv">1</span>)</span>
+<span id="cb1-145"><a href="#cb1-145" aria-hidden="true" tabindex="-1"></a>  grid<span class="sc">$</span>lowest_val_loss_epoch[i] <span class="ot">=</span> <span class="fu">which.min</span>(history<span class="sc">$</span>metrics<span class="sc">$</span>val_loss)</span>
+<span id="cb1-146"><a href="#cb1-146" aria-hidden="true" tabindex="-1"></a>  <span class="fu">save_model</span>(model, <span class="fu">sprintf</span>(<span class="st">"models/cnn_config_%d.keras"</span>, i), <span class="at">overwrite =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb1-147"><a href="#cb1-147" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb1-148"><a href="#cb1-148" aria-hidden="true" tabindex="-1"></a><span class="fu">write.csv</span>(grid, <span class="st">"results/cnn_grid.csv"</span>, <span class="at">row.names =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb1-149"><a href="#cb1-149" aria-hidden="true" tabindex="-1"></a><span class="fu">saveRDS</span>(histories, <span class="st">"results/cnn_histories.rds"</span>)</span>
+<span id="cb1-150"><a href="#cb1-150" aria-hidden="true" tabindex="-1"></a>best <span class="ot">=</span> grid<span class="sc">$</span>config[<span class="fu">which.max</span>(grid<span class="sc">$</span>val_accuracy)]</span>
+<span id="cb1-151"><a href="#cb1-151" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-152"><a href="#cb1-152" aria-hidden="true" tabindex="-1"></a><span class="co"># Retrain the chosen configuration with other seeds to see how much</span></span>
+<span id="cb1-153"><a href="#cb1-153" aria-hidden="true" tabindex="-1"></a><span class="co"># validation accuracy changes from run to run</span></span>
+<span id="cb1-154"><a href="#cb1-154" aria-hidden="true" tabindex="-1"></a>seeds <span class="ot">=</span> <span class="fu">data.frame</span>(<span class="at">seed =</span> <span class="fu">c</span>(<span class="dv">123</span>, <span class="dv">456</span>, <span class="dv">789</span>), <span class="at">val_accuracy =</span> <span class="cn">NA</span>)</span>
+<span id="cb1-155"><a href="#cb1-155" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="fu">seq_len</span>(<span class="fu">nrow</span>(seeds))) {</span>
+<span id="cb1-156"><a href="#cb1-156" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set_random_seed</span>(seeds<span class="sc">$</span>seed[i])</span>
+<span id="cb1-157"><a href="#cb1-157" aria-hidden="true" tabindex="-1"></a>  model <span class="ot">=</span> <span class="fu">build_cnn</span>(grid<span class="sc">$</span>learning_rate[best], grid<span class="sc">$</span>dropout_rate[best])</span>
+<span id="cb1-158"><a href="#cb1-158" aria-hidden="true" tabindex="-1"></a>  model <span class="sc">|&gt;</span> <span class="fu">fit</span>(x_split<span class="sc">$</span>train, y_split<span class="sc">$</span>train, <span class="at">epochs =</span> epochs,</span>
+<span id="cb1-159"><a href="#cb1-159" aria-hidden="true" tabindex="-1"></a>               <span class="at">batch_size =</span> batch_size, <span class="at">shuffle =</span> <span class="cn">TRUE</span>, <span class="at">verbose =</span> <span class="dv">0</span>)</span>
+<span id="cb1-160"><a href="#cb1-160" aria-hidden="true" tabindex="-1"></a>  seeds<span class="sc">$</span>val_accuracy[i] <span class="ot">=</span> <span class="fu">accuracy</span>(model, <span class="st">"val"</span>)</span>
+<span id="cb1-161"><a href="#cb1-161" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb1-162"><a href="#cb1-162" aria-hidden="true" tabindex="-1"></a><span class="fu">write.csv</span>(seeds, <span class="st">"results/cnn_seed_check.csv"</span>, <span class="at">row.names =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb1-163"><a href="#cb1-163" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-164"><a href="#cb1-164" aria-hidden="true" tabindex="-1"></a><span class="co"># The test session is used once, for the chosen model only</span></span>
+<span id="cb1-165"><a href="#cb1-165" aria-hidden="true" tabindex="-1"></a>model <span class="ot">=</span> <span class="fu">load_model</span>(<span class="fu">sprintf</span>(<span class="st">"models/cnn_config_%d.keras"</span>, best))</span>
+<span id="cb1-166"><a href="#cb1-166" aria-hidden="true" tabindex="-1"></a>test_eval <span class="ot">=</span> model <span class="sc">|&gt;</span> <span class="fu">evaluate</span>(x_split<span class="sc">$</span>test, y_split<span class="sc">$</span>test, <span class="at">verbose =</span> <span class="dv">0</span>)</span>
+<span id="cb1-167"><a href="#cb1-167" aria-hidden="true" tabindex="-1"></a><span class="fu">write.csv</span>(<span class="fu">data.frame</span>(<span class="at">selected_config =</span> best, <span class="at">test_loss =</span> test_eval<span class="sc">$</span>loss,</span>
+<span id="cb1-168"><a href="#cb1-168" aria-hidden="true" tabindex="-1"></a>                     <span class="at">test_accuracy =</span> test_eval<span class="sc">$</span>accuracy),</span>
+<span id="cb1-169"><a href="#cb1-169" aria-hidden="true" tabindex="-1"></a>          <span class="st">"results/cnn_test_evaluate.csv"</span>, <span class="at">row.names =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb1-170"><a href="#cb1-170" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-171"><a href="#cb1-171" aria-hidden="true" tabindex="-1"></a>split_names <span class="ot">=</span> <span class="fu">c</span>(<span class="at">check =</span> <span class="st">"same-session check"</span>, <span class="at">val =</span> <span class="st">"validation"</span>, <span class="at">test =</span> <span class="st">"test"</span>)</span>
+<span id="cb1-172"><a href="#cb1-172" aria-hidden="true" tabindex="-1"></a>cnn_pred <span class="ot">=</span> <span class="fu">do.call</span>(rbind, <span class="fu">lapply</span>(<span class="fu">names</span>(split_names), <span class="cf">function</span>(s) {</span>
+<span id="cb1-173"><a href="#cb1-173" aria-hidden="true" tabindex="-1"></a>  r <span class="ot">=</span> rows[[s]]</span>
+<span id="cb1-174"><a href="#cb1-174" aria-hidden="true" tabindex="-1"></a>  <span class="fu">data.frame</span>(<span class="at">image_id =</span> metadata<span class="sc">$</span>image_id[r], <span class="at">split =</span> split_names[[s]],</span>
+<span id="cb1-175"><a href="#cb1-175" aria-hidden="true" tabindex="-1"></a>             <span class="at">actual_writer =</span> metadata<span class="sc">$</span>person_id[r],</span>
+<span id="cb1-176"><a href="#cb1-176" aria-hidden="true" tabindex="-1"></a>             <span class="at">predicted_writer =</span> <span class="fu">predict_writer</span>(model, s) <span class="sc">+</span> <span class="dv">1</span>,</span>
+<span id="cb1-177"><a href="#cb1-177" aria-hidden="true" tabindex="-1"></a>             metadata[r, <span class="fu">c</span>(<span class="st">"digit"</span>, <span class="st">"session"</span>, <span class="st">"replicate"</span>)])</span>
+<span id="cb1-178"><a href="#cb1-178" aria-hidden="true" tabindex="-1"></a>}))</span>
+<span id="cb1-179"><a href="#cb1-179" aria-hidden="true" tabindex="-1"></a>cnn_pred<span class="sc">$</span>correct <span class="ot">=</span> cnn_pred<span class="sc">$</span>actual_writer <span class="sc">==</span> cnn_pred<span class="sc">$</span>predicted_writer</span>
+<span id="cb1-180"><a href="#cb1-180" aria-hidden="true" tabindex="-1"></a><span class="fu">write.csv</span>(cnn_pred, <span class="st">"results/cnn_predictions.csv"</span>, <span class="at">row.names =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb1-181"><a href="#cb1-181" aria-hidden="true" tabindex="-1"></a><span class="co"># Task 3: Siamese network with contrastive loss, following the metric-learning notes</span></span>
+<span id="cb1-182"><a href="#cb1-182" aria-hidden="true" tabindex="-1"></a>labels <span class="ot">=</span> metadata<span class="sc">$</span>person_id</span>
+<span id="cb1-183"><a href="#cb1-183" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-184"><a href="#cb1-184" aria-hidden="true" tabindex="-1"></a><span class="co"># Split the writers first, so no writer appears in more than one set of pairs</span></span>
+<span id="cb1-185"><a href="#cb1-185" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">2026</span>)</span>
+<span id="cb1-186"><a href="#cb1-186" aria-hidden="true" tabindex="-1"></a>writers <span class="ot">=</span> <span class="fu">sample</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">20</span>)</span>
+<span id="cb1-187"><a href="#cb1-187" aria-hidden="true" tabindex="-1"></a>writer_sets <span class="ot">=</span> <span class="fu">list</span>(<span class="at">train =</span> <span class="fu">sort</span>(writers[<span class="dv">1</span><span class="sc">:</span><span class="dv">12</span>]), <span class="at">val =</span> <span class="fu">sort</span>(writers[<span class="dv">13</span><span class="sc">:</span><span class="dv">16</span>]),</span>
+<span id="cb1-188"><a href="#cb1-188" aria-hidden="true" tabindex="-1"></a>                   <span class="at">test =</span> <span class="fu">sort</span>(writers[<span class="dv">17</span><span class="sc">:</span><span class="dv">20</span>]))</span>
+<span id="cb1-189"><a href="#cb1-189" aria-hidden="true" tabindex="-1"></a>ids <span class="ot">=</span> <span class="fu">lapply</span>(writer_sets, <span class="cf">function</span>(w) <span class="fu">which</span>(labels <span class="sc">%in%</span> w))</span>
+<span id="cb1-190"><a href="#cb1-190" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-191"><a href="#cb1-191" aria-hidden="true" tabindex="-1"></a><span class="co"># make_pairs() and make_batch() from the notes: the second image comes from the</span></span>
+<span id="cb1-192"><a href="#cb1-192" aria-hidden="true" tabindex="-1"></a><span class="co"># same writer about half the time</span></span>
+<span id="cb1-193"><a href="#cb1-193" aria-hidden="true" tabindex="-1"></a>make_pairs <span class="ot">=</span> <span class="cf">function</span>(ids, n, <span class="at">class_labels =</span> labels) {</span>
+<span id="cb1-194"><a href="#cb1-194" aria-hidden="true" tabindex="-1"></a>  a <span class="ot">=</span> <span class="fu">sample</span>(ids, n, <span class="at">replace =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb1-195"><a href="#cb1-195" aria-hidden="true" tabindex="-1"></a>  b <span class="ot">=</span> <span class="fu">vapply</span>(a, <span class="cf">function</span>(i) {</span>
+<span id="cb1-196"><a href="#cb1-196" aria-hidden="true" tabindex="-1"></a>    same <span class="ot">=</span> <span class="fu">runif</span>(<span class="dv">1</span>) <span class="sc">&lt;</span> .<span class="dv">5</span></span>
+<span id="cb1-197"><a href="#cb1-197" aria-hidden="true" tabindex="-1"></a>    pool <span class="ot">=</span> ids[class_labels[ids] <span class="sc">==</span> class_labels[i]]</span>
+<span id="cb1-198"><a href="#cb1-198" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (<span class="sc">!</span>same) pool <span class="ot">=</span> ids[class_labels[ids] <span class="sc">!=</span> class_labels[i]]</span>
+<span id="cb1-199"><a href="#cb1-199" aria-hidden="true" tabindex="-1"></a>    <span class="fu">sample</span>(<span class="fu">setdiff</span>(pool, i), <span class="dv">1</span>)</span>
+<span id="cb1-200"><a href="#cb1-200" aria-hidden="true" tabindex="-1"></a>  }, <span class="fu">integer</span>(<span class="dv">1</span>))</span>
+<span id="cb1-201"><a href="#cb1-201" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cbind</span>(a, b)</span>
+<span id="cb1-202"><a href="#cb1-202" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb1-203"><a href="#cb1-203" aria-hidden="true" tabindex="-1"></a>make_batch <span class="ot">=</span> <span class="cf">function</span>(p, <span class="at">images =</span> x, <span class="at">class_labels =</span> labels) {</span>
+<span id="cb1-204"><a href="#cb1-204" aria-hidden="true" tabindex="-1"></a>  y <span class="ot">=</span> <span class="fu">matrix</span>(<span class="fu">as.integer</span>(class_labels[p[, <span class="dv">1</span>]] <span class="sc">==</span> class_labels[p[, <span class="dv">2</span>]]), <span class="at">ncol =</span> <span class="dv">1</span>)</span>
+<span id="cb1-205"><a href="#cb1-205" aria-hidden="true" tabindex="-1"></a>  <span class="fu">list</span>(<span class="at">left =</span> images[p[, <span class="dv">1</span>], , , , <span class="at">drop =</span> <span class="cn">FALSE</span>],</span>
+<span id="cb1-206"><a href="#cb1-206" aria-hidden="true" tabindex="-1"></a>       <span class="at">right =</span> images[p[, <span class="dv">2</span>], , , , <span class="at">drop =</span> <span class="cn">FALSE</span>], <span class="at">y =</span> y)</span>
+<span id="cb1-207"><a href="#cb1-207" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb1-208"><a href="#cb1-208" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-209"><a href="#cb1-209" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">25</span>)</span>
+<span id="cb1-210"><a href="#cb1-210" aria-hidden="true" tabindex="-1"></a>pairs <span class="ot">=</span> <span class="fu">list</span>(<span class="at">train =</span> <span class="fu">make_pairs</span>(ids<span class="sc">$</span>train, <span class="dv">20000</span>), <span class="at">val =</span> <span class="fu">make_pairs</span>(ids<span class="sc">$</span>val, <span class="dv">4000</span>),</span>
+<span id="cb1-211"><a href="#cb1-211" aria-hidden="true" tabindex="-1"></a>             <span class="at">test =</span> <span class="fu">make_pairs</span>(ids<span class="sc">$</span>test, <span class="dv">8000</span>))</span>
+<span id="cb1-212"><a href="#cb1-212" aria-hidden="true" tabindex="-1"></a>batches <span class="ot">=</span> <span class="fu">lapply</span>(pairs, make_batch)</span>
+<span id="cb1-213"><a href="#cb1-213" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-214"><a href="#cb1-214" aria-hidden="true" tabindex="-1"></a><span class="co"># Shared encoder: each image becomes a 32-number embedding</span></span>
+<span id="cb1-215"><a href="#cb1-215" aria-hidden="true" tabindex="-1"></a>image <span class="ot">=</span> <span class="fu">layer_input</span>(<span class="at">shape =</span> <span class="fu">c</span>(<span class="dv">28</span>, <span class="dv">28</span>, <span class="dv">1</span>))</span>
+<span id="cb1-216"><a href="#cb1-216" aria-hidden="true" tabindex="-1"></a>embedding <span class="ot">=</span> image <span class="sc">|&gt;</span></span>
+<span id="cb1-217"><a href="#cb1-217" aria-hidden="true" tabindex="-1"></a>  <span class="fu">layer_conv_2d</span>(<span class="dv">32</span>, <span class="dv">3</span>, <span class="at">activation =</span> <span class="st">"relu"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb1-218"><a href="#cb1-218" aria-hidden="true" tabindex="-1"></a>  <span class="fu">layer_max_pooling_2d</span>(<span class="dv">2</span>) <span class="sc">|&gt;</span></span>
+<span id="cb1-219"><a href="#cb1-219" aria-hidden="true" tabindex="-1"></a>  <span class="fu">layer_conv_2d</span>(<span class="dv">64</span>, <span class="dv">3</span>, <span class="at">activation =</span> <span class="st">"relu"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb1-220"><a href="#cb1-220" aria-hidden="true" tabindex="-1"></a>  <span class="fu">layer_global_average_pooling_2d</span>() <span class="sc">|&gt;</span></span>
+<span id="cb1-221"><a href="#cb1-221" aria-hidden="true" tabindex="-1"></a>  <span class="fu">layer_dense</span>(<span class="dv">32</span>)</span>
+<span id="cb1-222"><a href="#cb1-222" aria-hidden="true" tabindex="-1"></a><span class="fu">set_random_seed</span>(<span class="dv">123</span>)</span>
+<span id="cb1-223"><a href="#cb1-223" aria-hidden="true" tabindex="-1"></a>encoder <span class="ot">=</span> <span class="fu">keras_model</span>(image, embedding)</span>
+<span id="cb1-224"><a href="#cb1-224" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-225"><a href="#cb1-225" aria-hidden="true" tabindex="-1"></a><span class="co"># Both images go through the same encoder; the output is the distance between them</span></span>
+<span id="cb1-226"><a href="#cb1-226" aria-hidden="true" tabindex="-1"></a>a <span class="ot">=</span> <span class="fu">layer_input</span>(<span class="at">shape =</span> <span class="fu">c</span>(<span class="dv">28</span>, <span class="dv">28</span>, <span class="dv">1</span>))</span>
+<span id="cb1-227"><a href="#cb1-227" aria-hidden="true" tabindex="-1"></a>b <span class="ot">=</span> <span class="fu">layer_input</span>(<span class="at">shape =</span> <span class="fu">c</span>(<span class="dv">28</span>, <span class="dv">28</span>, <span class="dv">1</span>))</span>
+<span id="cb1-228"><a href="#cb1-228" aria-hidden="true" tabindex="-1"></a>distance <span class="ot">=</span> <span class="fu">list</span>(<span class="fu">encoder</span>(a), <span class="fu">encoder</span>(b)) <span class="sc">|&gt;</span></span>
+<span id="cb1-229"><a href="#cb1-229" aria-hidden="true" tabindex="-1"></a>  <span class="fu">layer_lambda</span>(<span class="at">f =</span> <span class="cf">function</span>(z) {</span>
+<span id="cb1-230"><a href="#cb1-230" aria-hidden="true" tabindex="-1"></a>    <span class="fu">op_sqrt</span>(<span class="fu">op_sum</span>(<span class="fu">op_square</span>(z[[<span class="dv">1</span>]] <span class="sc">-</span> z[[<span class="dv">2</span>]]), <span class="at">axis =</span> <span class="dv">2</span>, <span class="at">keepdims =</span> <span class="cn">TRUE</span>) <span class="sc">+</span> <span class="fl">1e-7</span>)</span>
+<span id="cb1-231"><a href="#cb1-231" aria-hidden="true" tabindex="-1"></a>  })</span>
+<span id="cb1-232"><a href="#cb1-232" aria-hidden="true" tabindex="-1"></a>siamese <span class="ot">=</span> <span class="fu">keras_model</span>(<span class="fu">list</span>(a, b), distance)</span>
+<span id="cb1-233"><a href="#cb1-233" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-234"><a href="#cb1-234" aria-hidden="true" tabindex="-1"></a>contrastive_loss <span class="ot">=</span> <span class="cf">function</span>(y, d) {</span>
+<span id="cb1-235"><a href="#cb1-235" aria-hidden="true" tabindex="-1"></a>  <span class="fu">op_mean</span>(y <span class="sc">*</span> <span class="fu">op_square</span>(d) <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">-</span> y) <span class="sc">*</span> <span class="fu">op_square</span>(<span class="fu">op_maximum</span>(<span class="dv">1</span> <span class="sc">-</span> d, <span class="dv">0</span>)))</span>
+<span id="cb1-236"><a href="#cb1-236" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb1-237"><a href="#cb1-237" aria-hidden="true" tabindex="-1"></a>siamese <span class="sc">|&gt;</span> <span class="fu">compile</span>(<span class="at">optimizer =</span> <span class="fu">optimizer_adam</span>(<span class="fl">1e-3</span>), <span class="at">loss =</span> contrastive_loss)</span>
+<span id="cb1-238"><a href="#cb1-238" aria-hidden="true" tabindex="-1"></a>siamese_history <span class="ot">=</span> siamese <span class="sc">|&gt;</span> <span class="fu">fit</span>(</span>
+<span id="cb1-239"><a href="#cb1-239" aria-hidden="true" tabindex="-1"></a>  <span class="fu">list</span>(batches<span class="sc">$</span>train<span class="sc">$</span>left, batches<span class="sc">$</span>train<span class="sc">$</span>right), batches<span class="sc">$</span>train<span class="sc">$</span>y,</span>
+<span id="cb1-240"><a href="#cb1-240" aria-hidden="true" tabindex="-1"></a>  <span class="at">validation_data =</span> <span class="fu">list</span>(<span class="fu">list</span>(batches<span class="sc">$</span>val<span class="sc">$</span>left, batches<span class="sc">$</span>val<span class="sc">$</span>right), batches<span class="sc">$</span>val<span class="sc">$</span>y),</span>
+<span id="cb1-241"><a href="#cb1-241" aria-hidden="true" tabindex="-1"></a>  <span class="at">epochs =</span> <span class="dv">20</span>, <span class="at">batch_size =</span> batch_size, <span class="at">verbose =</span> <span class="dv">0</span></span>
+<span id="cb1-242"><a href="#cb1-242" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb1-243"><a href="#cb1-243" aria-hidden="true" tabindex="-1"></a><span class="fu">saveRDS</span>(siamese_history<span class="sc">$</span>metrics, <span class="st">"results/siamese_history.rds"</span>)</span>
+<span id="cb1-244"><a href="#cb1-244" aria-hidden="true" tabindex="-1"></a><span class="fu">save_model_weights</span>(siamese, <span class="st">"models/siamese.weights.h5"</span>, <span class="at">overwrite =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb1-245"><a href="#cb1-245" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-246"><a href="#cb1-246" aria-hidden="true" tabindex="-1"></a>pair_distance <span class="ot">=</span> <span class="cf">function</span>(batch) {</span>
+<span id="cb1-247"><a href="#cb1-247" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as.numeric</span>(<span class="fu">predict</span>(siamese, <span class="fu">list</span>(batch<span class="sc">$</span>left, batch<span class="sc">$</span>right), <span class="at">verbose =</span> <span class="dv">0</span>))</span>
+<span id="cb1-248"><a href="#cb1-248" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb1-249"><a href="#cb1-249" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-250"><a href="#cb1-250" aria-hidden="true" tabindex="-1"></a><span class="co"># Choose the threshold that gives the best balanced accuracy on the validation</span></span>
+<span id="cb1-251"><a href="#cb1-251" aria-hidden="true" tabindex="-1"></a><span class="co"># pairs; a pair is called "same writer" when its distance is below it</span></span>
+<span id="cb1-252"><a href="#cb1-252" aria-hidden="true" tabindex="-1"></a>valid_distance <span class="ot">=</span> <span class="fu">pair_distance</span>(batches<span class="sc">$</span>val)</span>
+<span id="cb1-253"><a href="#cb1-253" aria-hidden="true" tabindex="-1"></a>valid_same <span class="ot">=</span> <span class="fu">as.logical</span>(batches<span class="sc">$</span>val<span class="sc">$</span>y[, <span class="dv">1</span>])</span>
+<span id="cb1-254"><a href="#cb1-254" aria-hidden="true" tabindex="-1"></a>balanced_accuracy_at <span class="ot">=</span> <span class="cf">function</span>(cut) {</span>
+<span id="cb1-255"><a href="#cb1-255" aria-hidden="true" tabindex="-1"></a>  predicts_same <span class="ot">=</span> valid_distance <span class="sc">&lt;</span> cut</span>
+<span id="cb1-256"><a href="#cb1-256" aria-hidden="true" tabindex="-1"></a>  (<span class="fu">mean</span>(predicts_same[valid_same]) <span class="sc">+</span> <span class="fu">mean</span>(<span class="sc">!</span>predicts_same[<span class="sc">!</span>valid_same])) <span class="sc">/</span> <span class="dv">2</span></span>
+<span id="cb1-257"><a href="#cb1-257" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb1-258"><a href="#cb1-258" aria-hidden="true" tabindex="-1"></a>candidates <span class="ot">=</span> <span class="fu">sort</span>(<span class="fu">unique</span>(valid_distance))</span>
+<span id="cb1-259"><a href="#cb1-259" aria-hidden="true" tabindex="-1"></a>scores <span class="ot">=</span> <span class="fu">vapply</span>(candidates, balanced_accuracy_at, <span class="fu">numeric</span>(<span class="dv">1</span>))</span>
+<span id="cb1-260"><a href="#cb1-260" aria-hidden="true" tabindex="-1"></a>threshold <span class="ot">=</span> candidates[<span class="fu">which.max</span>(scores)]</span>
+<span id="cb1-261"><a href="#cb1-261" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-262"><a href="#cb1-262" aria-hidden="true" tabindex="-1"></a>pair_table <span class="ot">=</span> <span class="cf">function</span>(p, batch, d, set) {</span>
+<span id="cb1-263"><a href="#cb1-263" aria-hidden="true" tabindex="-1"></a>  <span class="fu">data.frame</span>(<span class="at">set =</span> set, <span class="at">left =</span> p[, <span class="dv">1</span>], <span class="at">right =</span> p[, <span class="dv">2</span>],</span>
+<span id="cb1-264"><a href="#cb1-264" aria-hidden="true" tabindex="-1"></a>             <span class="at">same_writer =</span> batch<span class="sc">$</span>y[, <span class="dv">1</span>], <span class="at">distance =</span> d,</span>
+<span id="cb1-265"><a href="#cb1-265" aria-hidden="true" tabindex="-1"></a>             <span class="at">predicted_same =</span> <span class="fu">as.integer</span>(d <span class="sc">&lt;</span> threshold),</span>
+<span id="cb1-266"><a href="#cb1-266" aria-hidden="true" tabindex="-1"></a>             <span class="at">writer_left =</span> labels[p[, <span class="dv">1</span>]], <span class="at">writer_right =</span> labels[p[, <span class="dv">2</span>]],</span>
+<span id="cb1-267"><a href="#cb1-267" aria-hidden="true" tabindex="-1"></a>             <span class="at">digit_left =</span> metadata<span class="sc">$</span>digit[p[, <span class="dv">1</span>]], <span class="at">digit_right =</span> metadata<span class="sc">$</span>digit[p[, <span class="dv">2</span>]],</span>
+<span id="cb1-268"><a href="#cb1-268" aria-hidden="true" tabindex="-1"></a>             <span class="at">session_left =</span> metadata<span class="sc">$</span>session[p[, <span class="dv">1</span>]],</span>
+<span id="cb1-269"><a href="#cb1-269" aria-hidden="true" tabindex="-1"></a>             <span class="at">session_right =</span> metadata<span class="sc">$</span>session[p[, <span class="dv">2</span>]])</span>
+<span id="cb1-270"><a href="#cb1-270" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb1-271"><a href="#cb1-271" aria-hidden="true" tabindex="-1"></a>siamese_pairs <span class="ot">=</span> <span class="fu">rbind</span>(</span>
+<span id="cb1-272"><a href="#cb1-272" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pair_table</span>(pairs<span class="sc">$</span>val, batches<span class="sc">$</span>val, valid_distance, <span class="st">"validation"</span>),</span>
+<span id="cb1-273"><a href="#cb1-273" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pair_table</span>(pairs<span class="sc">$</span>test, batches<span class="sc">$</span>test, <span class="fu">pair_distance</span>(batches<span class="sc">$</span>test), <span class="st">"test"</span>)</span>
+<span id="cb1-274"><a href="#cb1-274" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb1-275"><a href="#cb1-275" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-276"><a href="#cb1-276" aria-hidden="true" tabindex="-1"></a><span class="co"># Extra test sets with one digit each, to compare digits</span></span>
+<span id="cb1-277"><a href="#cb1-277" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (d <span class="cf">in</span> <span class="dv">0</span><span class="sc">:</span><span class="dv">4</span>) {</span>
+<span id="cb1-278"><a href="#cb1-278" aria-hidden="true" tabindex="-1"></a>  p <span class="ot">=</span> <span class="fu">make_pairs</span>(ids<span class="sc">$</span>test[metadata<span class="sc">$</span>digit[ids<span class="sc">$</span>test] <span class="sc">==</span> d], <span class="dv">2000</span>)</span>
+<span id="cb1-279"><a href="#cb1-279" aria-hidden="true" tabindex="-1"></a>  batch <span class="ot">=</span> <span class="fu">make_batch</span>(p)</span>
+<span id="cb1-280"><a href="#cb1-280" aria-hidden="true" tabindex="-1"></a>  siamese_pairs <span class="ot">=</span> <span class="fu">rbind</span>(siamese_pairs,</span>
+<span id="cb1-281"><a href="#cb1-281" aria-hidden="true" tabindex="-1"></a>                        <span class="fu">pair_table</span>(p, batch, <span class="fu">pair_distance</span>(batch), <span class="fu">paste</span>(<span class="st">"digit"</span>, d)))</span>
+<span id="cb1-282"><a href="#cb1-282" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb1-283"><a href="#cb1-283" aria-hidden="true" tabindex="-1"></a><span class="fu">write.csv</span>(siamese_pairs, <span class="st">"results/siamese_pairs.csv"</span>, <span class="at">row.names =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb1-284"><a href="#cb1-284" aria-hidden="true" tabindex="-1"></a><span class="fu">saveRDS</span>(<span class="fu">list</span>(<span class="at">train_writers =</span> writer_sets<span class="sc">$</span>train, <span class="at">val_writers =</span> writer_sets<span class="sc">$</span>val,</span>
+<span id="cb1-285"><a href="#cb1-285" aria-hidden="true" tabindex="-1"></a>             <span class="at">test_writers =</span> writer_sets<span class="sc">$</span>test, <span class="at">threshold =</span> threshold,</span>
+<span id="cb1-286"><a href="#cb1-286" aria-hidden="true" tabindex="-1"></a>             <span class="at">val_balanced_accuracy =</span> <span class="fu">max</span>(scores),</span>
+<span id="cb1-287"><a href="#cb1-287" aria-hidden="true" tabindex="-1"></a>             <span class="at">n_train_pairs =</span> <span class="fu">nrow</span>(pairs<span class="sc">$</span>train),</span>
+<span id="cb1-288"><a href="#cb1-288" aria-hidden="true" tabindex="-1"></a>             <span class="at">train_same_share =</span> <span class="fu">mean</span>(batches<span class="sc">$</span>train<span class="sc">$</span>y)),</span>
+<span id="cb1-289"><a href="#cb1-289" aria-hidden="true" tabindex="-1"></a>        <span class="st">"results/siamese_design.rds"</span>)</span>
+<span id="cb1-290"><a href="#cb1-290" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-291"><a href="#cb1-291" aria-hidden="true" tabindex="-1"></a><span class="co"># Record the software used</span></span>
+<span id="cb1-292"><a href="#cb1-292" aria-hidden="true" tabindex="-1"></a>tf <span class="ot">=</span> reticulate<span class="sc">::</span><span class="fu">import</span>(<span class="st">"tensorflow"</span>)</span>
+<span id="cb1-293"><a href="#cb1-293" aria-hidden="true" tabindex="-1"></a><span class="fu">writeLines</span>(<span class="fu">c</span>(R.version.string,</span>
+<span id="cb1-294"><a href="#cb1-294" aria-hidden="true" tabindex="-1"></a>             <span class="fu">paste</span>(<span class="st">"keras3"</span>, <span class="fu">as.character</span>(<span class="fu">packageVersion</span>(<span class="st">"keras3"</span>))),</span>
+<span id="cb1-295"><a href="#cb1-295" aria-hidden="true" tabindex="-1"></a>             <span class="fu">paste</span>(<span class="st">"TensorFlow"</span>, tf<span class="sc">$</span><span class="st">`</span><span class="at">__version__</span><span class="st">`</span>),</span>
+<span id="cb1-296"><a href="#cb1-296" aria-hidden="true" tabindex="-1"></a>             <span class="fu">paste</span>(<span class="st">"Keras"</span>, tf<span class="sc">$</span>keras<span class="sc">$</span><span class="st">`</span><span class="at">__version__</span><span class="st">`</span>)),</span>
+<span id="cb1-297"><a href="#cb1-297" aria-hidden="true" tabindex="-1"></a>           <span class="st">"results/versions.txt"</span>)</span>
+<span id="cb1-298"><a href="#cb1-298" aria-hidden="true" tabindex="-1"></a><span class="fu">writeLines</span>(<span class="fu">capture.output</span>(<span class="fu">sessionInfo</span>()), <span class="st">"results/session_info.txt"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 </div>
 </section>
