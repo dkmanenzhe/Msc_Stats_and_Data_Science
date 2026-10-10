@@ -1,0 +1,11 @@
+STA5073Z (Data Science for Industry) Assignment 2: writer identification and matching
+
+(a) Group members and roles
+    Manenzhe Dakalo (MNNDAK002): [describe what Dakalo did]
+    Troy Bisnath (BSNTRO001): [describe what Troy did]
+
+(b) GitHub Pages website
+    https://dkmanenzhe.github.io/Msc_Stats_and_Data_Science/
+
+(c) GitHub repository from which the website was built
+    https://github.com/dkmanenzhe/Msc_Stats_and_Data_Science

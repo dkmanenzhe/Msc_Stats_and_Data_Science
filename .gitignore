@@ -1,0 +1,41 @@
+# R / RStudio
+.Rproj.user
+.Rhistory
+.RData
+.Ruserdata
+
+# Quarto build files (the rendered website in docs/ IS committed)
+/.quarto/
+*_cache/
+/STA5073Z_Assignment2_files/
+/STA5073Z_Assignment2.html
+
+# Trained models: recreated by rendering with retrain: true
+models/
+
+# Earlier versions of the assignment, kept on disk but not part of the repository
+Paper.Rmd
+Paper.pdf
+Paper.tex
+Paper_files/
+analysis_training.R
+render_report.R
+verify_results.R
+REVISION_NOTES.txt
+task2_results/
+task3_results/
+task5_results/
+verified_results/
+backup_before_revision/
+backup_before_notes_revision/
+writer-identification-site/
+/figures/
+/handwriting.rds
+
+**/*.quarto_ipynb
+/index.qmd
+/index.pdf
+# Files from the report's earlier name
+/writer_identification_report.qmd
+/docs/writer_identification_report.pdf
+/docs/writer_identification_report_files/

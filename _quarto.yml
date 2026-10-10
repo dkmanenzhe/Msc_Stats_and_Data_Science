@@ -1,0 +1,23 @@
+project:
+  type: website
+  output-dir: docs
+  render:
+    - STA5073Z_Assignment2.qmd
+
+website:
+  title: "Writer identification and matching"
+  site-url: https://dkmanenzhe.github.io/Msc_Stats_and_Data_Science/
+  repo-url: https://github.com/dkmanenzhe/Msc_Stats_and_Data_Science
+  navbar:
+    left:
+      - href: STA5073Z_Assignment2.qmd
+        text: Report
+    right:
+      - icon: github
+        href: https://github.com/dkmanenzhe/Msc_Stats_and_Data_Science
+        aria-label: GitHub repository
+
+format:
+  html:
+    theme: cosmo
+    toc: true
