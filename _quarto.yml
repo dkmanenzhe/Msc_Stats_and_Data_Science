@@ -1,6 +1,8 @@
 project:
   type: website
   output-dir: docs
+  resources:
+    - UCT_Logo.jpg
   render:
     - STA5073Z_Assignment2.qmd
 

@@ -1,0 +1,49 @@
+/* Cover page at the top of the website, matching the PDF title page */
+#title-block-header.cover-page {
+  text-align: center;
+  margin: 1rem 0 4rem;
+}
+.cover-logo {
+  width: 60%;
+  max-width: 420px;
+  margin-bottom: 2rem;
+}
+.cover-page .title {
+  font-weight: 700;
+  font-size: 2rem;
+}
+.cover-page hr {
+  margin: 1.5rem 0;
+  opacity: 0.6;
+}
+.cover-authors {
+  display: inline-flex;
+  align-items: flex-start;
+  gap: 1rem;
+  font-size: 1.3rem;
+  text-align: left;
+  line-height: 1.5;
+}
+.cover-authors table {
+  margin: 0;
+  border: 0;
+}
+.cover-authors td {
+  padding: 0 1rem 0 0;
+  border: 0;
+  line-height: 1.5;
+  white-space: nowrap;
+}
+/* Phones: put the label above the names */
+@media (max-width: 600px) {
+  .cover-authors {
+    flex-direction: column;
+    align-items: center;
+    gap: 0.25rem;
+    font-size: 1.05rem;
+  }
+}
+.cover-date {
+  margin: 2rem 0 0;
+  font-size: 1.1rem;
+}

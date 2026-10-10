@@ -17,6 +17,7 @@ decides whether two digits were written by the same person, trained on 25,000 si
 | `STA5073Z_Assignment2.qmd` | The report: a reproducible Quarto document with all text and code. |
 | `_quarto.yml` | Website settings. The site is rendered into `docs/`. |
 | `titlepage.tex`, `UCT_Logo.jpg` | Cover page of the PDF version. |
+| `title-block.html`, `cover.css` | Cover page of the website version. |
 | `data/handwriting.rds` | The assignment data. |
 | `results/` | Saved model results, written by the report's code. |
 | `images/` | Image grids, written by the report's code. |

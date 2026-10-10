@@ -13,6 +13,9 @@ format:
     toc-depth: 2
     code-copy: true
     fig-align: center
+    css: cover.css
+    template-partials:
+      - title-block.html
   pdf:
     pdf-engine: xelatex
     classoption: notitlepage
@@ -895,4 +898,10 @@ All results in this report come from the code below, which runs when the documen
 
 Models were trained with `r versions[1]`, `r versions[2]`, `r versions[3]` and `r versions[4]` (Python backend). The full R session information is saved in `results/session_info.txt`.
 
+::: {.content-visible when-format="pdf"}
+## AI use statement
 
+*Edit this so that it describes exactly how your group used AI tools.*
+
+We used Claude (an AI assistant made by Anthropic) during this project. It was used to review our earlier report against the course notes; to rewrite the analysis code so that it uses only methods covered in the notes; to train the models and check the results; and to draft and revise the text of this report. The data splits, the models and every number reported here come from the code in Appendix A, which we ran and checked ourselves. We reviewed all AI-generated code and text, and we take responsibility for the content of this report.
+:::

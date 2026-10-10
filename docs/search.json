@@ -61,12 +61,5 @@
     "title": "STA5073Z (Data Science for Industry) Assignment 2",
     "section": "Appendix B: software",
     "text": "Appendix B: software\nModels were trained with R version 4.3.3 (2024-02-29), keras3 1.2.0, TensorFlow 2.21.0 and Keras 3.15.1 (Python backend). The full R session information is saved in results/session_info.txt."
-  },
-  {
-    "objectID": "index.html#ai-use-statement",
-    "href": "index.html#ai-use-statement",
-    "title": "STA5073Z (Data Science for Industry) Assignment 2",
-    "section": "AI use statement",
-    "text": "AI use statement\nEdit this so that it describes exactly how your group used AI tools.\nWe used Claude (an AI assistant made by Anthropic) during this project. It was used to review our earlier report against the course notes; to rewrite the analysis code so that it uses only methods covered in the notes; to train the models and check the results; and to draft and revise the text of this report. The data splits, the models and every number reported here come from the code in Appendix A, which we ran and checked ourselves. We reviewed all AI-generated code and text, and we take responsibility for the content of this report."
   }
 ]
