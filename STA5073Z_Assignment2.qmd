@@ -2,7 +2,7 @@
 title: "STA5073Z (Data Science for Industry) Assignment 2"
 subtitle: "Writer identification and matching with a CNN and a Siamese network"
 author:
-  - "Manenzhe Dakalo (MNNDAK002)"
+  - "Dakalo Manenzhe (MNNDAK002)"
   - "Troy Bisnath (BSNTRO001)"
 date: today
 date-format: "MMMM D, YYYY"

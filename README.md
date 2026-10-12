@@ -1,7 +1,7 @@
 # Writer identification and matching
 
 STA5073Z (Data Science for Industry), Assignment 2.
-Manenzhe Dakalo (MNNDAK002) and Troy Bisnath (BSNTRO001).
+Dakalo Manenzhe (MNNDAK002) and Troy Bisnath (BSNTRO001).
 
 A CNN that identifies which of 20 writers wrote a digit, and a Siamese network that
 decides whether two digits were written by the same person, trained on 25,000 simulated
