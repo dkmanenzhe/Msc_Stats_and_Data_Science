@@ -459,13 +459,28 @@ Table&nbsp;3: Test pairs (four unseen writers): actual against predicted.
 <p>On the 8,000 test pairs from unseen writers, the network accepts 81.7% of same-writer pairs and correctly rejects 54.6% of different-writer pairs, giving a balanced accuracy of <strong>68.2%</strong> (chance is 50%). In practice, if the system is asked “did the same person write these two digits?” about two people it has never seen, it confirms a true match 82% of the time and wrongly links two different people 45% of the time. It is therefore much better at confirming genuine matches than at excluding different writers. The two distance distributions in <a href="#fig-siamese-hist" class="quarto-xref">Figure&nbsp;5</a> overlap heavily, which is why no threshold can avoid both kinds of error. On the validation writers the same threshold gave 81.4% balanced accuracy, 13 points higher than on the test writers. Section 4 explains this gap.</p>
 <div class="cell">
 <div class="cell-output-display">
+<div id="fig-siamese-roc" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-siamese-roc-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="STA5073Z_Assignment2_files/figure-html/fig-siamese-roc-1.png" class="img-fluid figure-img" width="441">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-siamese-roc-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;6: ROC curves for the test pairs: all pairs, and same-writer pairs from one session or from two different sessions (each against all different-writer pairs). The dot marks the validation-chosen threshold, the grey diagonal is chance.
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p><strong>Threshold-free evaluation.</strong> Balanced accuracy is a threshold-dependent metric. The ROC curve (<a href="#fig-siamese-roc" class="quarto-xref">Figure&nbsp;6</a>) displays all feasible thresholds at once: each point indicates the proportion of true matches accepted against the proportion of different-writer pairs falsely accepted. The area under the curve (AUC) is the probability that a randomly chosen different-writer pair is further apart than a randomly chosen same-writer pair, so 0.5 is chance and 1 is perfect separation. The AUC is <strong>0.76</strong> on the test writers and 0.89 on the validation writers. The equal error rate is 30.9%: this is the error rate at the threshold where false matches and missed matches are equally common, and it is the traditional single-number summary for verification systems such as signature checking. The curves also separate by session: the AUC is 0.86 when a same-writer pair comes from one session and 0.74 when it comes from two. The session effect addressed in Section 6 is therefore not a side-effect of where the threshold was placed.</p>
+<div class="cell">
+<div class="cell-output-display">
 <div id="fig-siamese-examples" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-siamese-examples-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <img src="STA5073Z_Assignment2_files/figure-html/fig-siamese-examples-1.png" class="img-fluid figure-img" width="700">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-siamese-examples-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;6: Example test pairs in each outcome group, with their distances.
+Figure&nbsp;7: Example test pairs in each outcome group, with their distances.
 </figcaption>
 </figure>
 </div>
@@ -643,7 +658,7 @@ Table&nbsp;5: CNN grid search (validation = session 4). Configuration 4 has the 
 <img src="STA5073Z_Assignment2_files/figure-html/fig-grid-curves-1.png" class="img-fluid figure-img" width="720">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-grid-curves-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;7: Validation accuracy (left) and validation loss (right) by epoch for the four configurations.
+Figure&nbsp;8: Validation accuracy (left) and validation loss (right) by epoch for the four configurations.
 </figcaption>
 </figure>
 </div>
@@ -687,7 +702,7 @@ Table&nbsp;6: Chosen configuration retrained with different seeds.
 <p><strong>Sensitivity.</strong></p>
 <ul>
 <li><strong>Validation accuracy is not very sensitive.</strong> It ranges from 51.5% to 55.1%, a spread of 3.6 percentage points. The smaller learning rate is better at both dropout rates (by 3.0 and 2.5 points). Raising dropout from 0.2 to 0.5 changes validation accuracy by 1.0 and 0.6 points. Changing only the seed moves the chosen configuration’s validation accuracy by 2.0 points, 56% of the grid’s spread. Only the learning-rate effect is consistent and larger than the seed-to-seed variation; the dropout effect cannot be told apart from training noise.</li>
-<li><strong>Validation loss is very sensitive.</strong> At learning rate 0.001 it averages 4.55, against 2.67 at 0.0001. With the larger learning rate, validation loss is lowest after epoch 1 and then climbs, while validation accuracy barely changes (<a href="#fig-grid-curves" class="quarto-xref">Figure&nbsp;7</a>). The model becomes increasingly <em>confident</em> about the wrong writer on the new session. The slower learning rate delays this overfitting but does not remove it.</li>
+<li><strong>Validation loss is very sensitive.</strong> At learning rate 0.001 it averages 4.55, against 2.67 at 0.0001. With the larger learning rate, validation loss is lowest after epoch 1 and then climbs, while validation accuracy barely changes (<a href="#fig-grid-curves" class="quarto-xref">Figure&nbsp;8</a>). The model becomes increasingly <em>confident</em> about the wrong writer on the new session. The slower learning rate delays this overfitting but does not remove it.</li>
 <li><strong>Training and same-session accuracy are hardly sensitive at all.</strong> Every configuration scores 100% (after rounding) on the same-session check. No setting in this grid closes the gap between seen and new sessions, because that gap is not a tuning problem: the training data contain only three recording conditions per writer.</li>
 </ul>
 <p>The chosen configuration (learning rate 0.0001, dropout 0.5) scored 56.1% on the test session. Given the seed check, we would expect the other configurations to perform within a few points of it.</p>
@@ -705,11 +720,12 @@ Table&nbsp;7: Writer information by digit. CNN: test-session identification accu
 <div class="cell-output-display">
 <table class="do-not-create-environment cell caption-top table table-sm table-striped small">
 <colgroup>
-<col style="width: 7%">
-<col style="width: 7%">
-<col style="width: 25%">
-<col style="width: 31%">
+<col style="width: 6%">
+<col style="width: 6%">
+<col style="width: 21%">
 <col style="width: 27%">
+<col style="width: 24%">
+<col style="width: 13%">
 </colgroup>
 <thead>
 <tr class="header">
@@ -718,6 +734,7 @@ Table&nbsp;7: Writer information by digit. CNN: test-session identification accu
 <th style="text-align: left;">Same pairs accepted</th>
 <th style="text-align: left;">Different pairs rejected</th>
 <th style="text-align: left;">Siamese balanced acc.</th>
+<th style="text-align: left;">Siamese AUC</th>
 </tr>
 </thead>
 <tbody>
@@ -727,6 +744,7 @@ Table&nbsp;7: Writer information by digit. CNN: test-session identification accu
 <td style="text-align: left;">91.3%</td>
 <td style="text-align: left;">59.5%</td>
 <td style="text-align: left;">75.4%</td>
+<td style="text-align: left;">0.86</td>
 </tr>
 <tr class="even">
 <td style="text-align: right;">1</td>
@@ -734,6 +752,7 @@ Table&nbsp;7: Writer information by digit. CNN: test-session identification accu
 <td style="text-align: left;">78.3%</td>
 <td style="text-align: left;">49.2%</td>
 <td style="text-align: left;">63.8%</td>
+<td style="text-align: left;">0.72</td>
 </tr>
 <tr class="odd">
 <td style="text-align: right;">2</td>
@@ -741,6 +760,7 @@ Table&nbsp;7: Writer information by digit. CNN: test-session identification accu
 <td style="text-align: left;">80.2%</td>
 <td style="text-align: left;">70.4%</td>
 <td style="text-align: left;">75.3%</td>
+<td style="text-align: left;">0.85</td>
 </tr>
 <tr class="even">
 <td style="text-align: right;">3</td>
@@ -748,6 +768,7 @@ Table&nbsp;7: Writer information by digit. CNN: test-session identification accu
 <td style="text-align: left;">94.3%</td>
 <td style="text-align: left;">55.2%</td>
 <td style="text-align: left;">74.8%</td>
+<td style="text-align: left;">0.88</td>
 </tr>
 <tr class="odd">
 <td style="text-align: right;">4</td>
@@ -755,6 +776,7 @@ Table&nbsp;7: Writer information by digit. CNN: test-session identification accu
 <td style="text-align: left;">96.8%</td>
 <td style="text-align: left;">29.9%</td>
 <td style="text-align: left;">63.3%</td>
+<td style="text-align: left;">0.81</td>
 </tr>
 </tbody>
 </table>
@@ -763,7 +785,7 @@ Table&nbsp;7: Writer information by digit. CNN: test-session identification accu
 </figure>
 </div>
 </div>
-<p><strong>Which digits carry more writer information?</strong> Ranked from most to least informative, the CNN orders the digits 3, 0, 4, 1, 2 and the Siamese network orders them 0, 2, 3, 1, 4. Both models place digits 0 and 3 among their three best and digit 1 among their two weakest. This fits the images: a one is mostly a single vertical stroke with few places for style to show, whereas digits with curves give width, roundness and closure room to vary between writers. The models disagree most about digit 2. The Siamese network’s weakest digit is 4: it accepts 97% of same-writer pairs but rejects only 30% of different-writer pairs, so the four test writers’ 4s sit close together in the embedding. A digit’s ranking therefore depends on the model and on which writers are being compared, and only the broad pattern should be taken seriously.</p>
+<p><strong>Which digits carry more writer information?</strong> Ranked from most to least informative, the CNN orders the digits 3, 0, 4, 1, 2 and the Siamese network orders them 0, 2, 3, 1, 4. Both models place digits 0 and 3 among their three best and digit 1 among their two weakest. This fits the images: a one is mostly a single vertical stroke with few places for style to show, whereas digits with curves give width, roundness and closure room to vary between writers. The models disagree most about digit 2. The Siamese network’s weakest digit is 4: it accepts 97% of same-writer pairs but rejects only 30% of different-writer pairs, so the four test writers’ 4s sit close together in the embedding. The threshold-free AUC ranks the digits 3, 0, 2, 4, 1, with digit 1 lowest (0.72). 4 of the five single-digit AUCs are above the AUC of 0.76 for the main test set, whose pairs mostly show two different digits. A digit’s ranking therefore depends on the model and on which writers are being compared, and only the broad pattern should be taken seriously.</p>
 <p>Comparing whole pairs makes the same point. On the main test set, same-writer pairs are accepted 87.8% of the time when both images show the same digit and 80.2% when they show different digits. A shared character makes style easier to compare, but the network still matches across digits well above chance, so some of what it learns is a general style (size, slant, stroke width) rather than the shape of one digit.</p>
 <div class="cell">
 <div id="tbl-sessions" class="cell quarto-float quarto-figure quarto-figure-center anchored">
@@ -833,11 +855,11 @@ Table&nbsp;8: Effect of recording session on performance.
 </div>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-writer-pair-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;8: Writer 5 (left) and writer 13 (right) across their five sessions. The CNN labelled 198 of writer 5’s 250 session-5 images as writer 13.
+Figure&nbsp;9: Writer 5 (left) and writer 13 (right) across their five sessions. The CNN labelled 198 of writer 5’s 250 session-5 images as writer 13.
 </figcaption>
 </figure>
 </div>
-<p>The session change also explains the CNN’s worst errors. The model judged writer 5’s session-5 digits to be closer to writer 13 than to writer 5’s own training sessions (<a href="#fig-writer-pair" class="quarto-xref">Figure&nbsp;8</a>): 198 of writer 5’s 250 test images were labelled as writer 13, and 95 of writer 13’s images were labelled as writer 5. Writer 10’s session-5 writing was taken for writer 2 in 222 of 250 images. Which writers suffer depends on the session: writer 7 scores 30% in session 4 but 100% in session 5. When a writer’s style drifts towards someone else’s, the classifier assigns much of that session to the other person.</p>
+<p>The session change also explains the CNN’s worst errors. The model judged writer 5’s session-5 digits to be closer to writer 13 than to writer 5’s own training sessions (<a href="#fig-writer-pair" class="quarto-xref">Figure&nbsp;9</a>): 198 of writer 5’s 250 test images were labelled as writer 13, and 95 of writer 13’s images were labelled as writer 5. Writer 10’s session-5 writing was taken for writer 2 in 222 of 250 images. Which writers suffer depends on the session: writer 7 scores 30% in session 4 but 100% in session 5. When a writer’s style drifts towards someone else’s, the classifier assigns much of that session to the other person.</p>
 <p><strong>What would help.</strong> The notes suggest more varied training data. Here that means more sessions per writer, since three sessions are too few to learn what stays constant about a person, and possibly data augmentation (rotation, cropping) to imitate small changes in size and slant. Larger networks or longer training would not help: the training curves show the model already fits the training sessions almost perfectly.</p>
 <p><strong>Conclusion.</strong> The CNN identifies the writer of a single digit from a new session 56% of the time (chance 5%). The Siamese network matches pairs from unseen writers with 68% balanced accuracy (chance 50%). Digits 0 and 3 carry the most writer information for both models and digit 1 the least, although the exact ranking depends on the model. Changes between recording sessions are the main obstacle in this data: performance on familiar sessions is far higher than on new ones. Only splits that hold out whole sessions or writers reveal this.</p>
 </section>
