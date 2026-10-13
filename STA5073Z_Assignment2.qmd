@@ -492,6 +492,31 @@ auc_cross_session = auc(tp$distance[in_cross], tp$same_writer[in_cross])
 roc_same_session = roc(tp$distance[in_same], tp$same_writer[in_same])
 roc_cross_session = roc(tp$distance[in_cross], tp$same_writer[in_cross])
 
+
+
+# CNN: combining several digits from the same writer in the test session
+vote_correct = function(digits) {
+  chosen = filter(test, digit %in% digits)
+  key = interaction(chosen$actual_writer, chosen$replicate, drop = TRUE)
+  votes = split(chosen$predicted_writer, key)
+  truth = sapply(split(chosen$actual_writer, key), `[`, 1)
+  score = mapply(function(p, w) {
+    counts = table(p)
+    top = as.integer(names(counts)[counts == max(counts)])
+    (w %in% top) / length(top)
+  }, votes, truth)
+  data.frame(writer = truth, score = score)
+}
+# averaging over all possible choices of k digits out of five
+vote_curve = sapply(1:5, function(k) {
+  mean(apply(combn(0:4, k), 2, function(dg) mean(vote_correct(dg)$score)))
+})
+vote_all = vote_correct(0:4)
+vote_writer = tapply(vote_all$score, vote_all$writer, mean)
+n_fixed = sum(vote_writer >= 0.9)
+n_stuck = sum(vote_writer <= 0.4)
+stuck_writers = names(vote_writer)[vote_writer <= 0.4]
+
 # How often each combination of two validation writers is wrongly matched
 vd = filter(vp, same_writer == 0)
 vd$combo = paste(pmin(vd$writer_left, vd$writer_right),
@@ -711,6 +736,25 @@ box()
 Per-writer accuracy varies widely (@fig-cnn-writer). `r text_always_right`, while writer `r names(worst)[1]` is correctly identified in `r pct(worst[1], 0)` of their test images and writer `r names(worst)[2]` in `r pct(worst[2], 0)`. The confusion table shows where the errors go. The largest are writer `r top_errors$actual[1]` labelled as writer `r top_errors$predicted[1]` (`r top_errors$n[1]` of 250 images), writer `r top_errors$actual[2]` as writer `r top_errors$predicted[2]` (`r top_errors$n[2]`) and writer `r top_errors$actual[3]` as writer `r top_errors$predicted[3]` (`r top_errors$n[3]`). These errors are concentrated, not random. Section 6 shows they are caused by session changes.
 
 **What the measures mean in practice.** Accuracy answers this question: if one of these 20 people writes a single digit on a new occasion, how often does the system name the right person? The answer is `r pct(acc_test, 0)` of the time. The per-writer accuracies and the confusion table matter in practice too, because a system that blames writer `r top_errors$predicted[1]` for writer `r top_errors$actual[1]`'s writing makes the same mistake every time, rather than occasionally. The model can only choose among the 20 writers it was trained on; it cannot say "none of these".
+
+```{r}
+#| label: fig-cnn-vote
+#| fig-cap: "Combining digits from the same writer and test session by majority vote. Left: accuracy against the number of digits combined (dashed line: 5% chance). Right: each writer's accuracy from one digit against five digits, the grey line marks no change. Only writers below 95% with five digits are labelled."
+#| fig-width: 7.5
+#| fig-height: 3.2
+par(mfrow = c(1, 2), mar = c(4, 4, 1, 1))
+plot(1:5, 100 * vote_curve, type = "b", pch = 19, lwd = 2, ylim = c(0, 100),
+     xlab = "Digits combined", ylab = "Test accuracy (%)")
+abline(h = 5, lty = 2)
+single = 100 * writer_acc_test[names(vote_writer)]
+plot(single, 100 * vote_writer, pch = 19, col = "blue", xlim = c(0, 100), ylim = c(0, 100),
+     xlab = "One digit (%)", ylab = "Five digits, majority vote (%)")
+abline(0, 1, col = "grey")
+lab = vote_writer < 0.95
+text(single[lab], 100 * vote_writer[lab], names(vote_writer)[lab], pos = 4, cex = 0.6)
+```
+
+**Combining several digits.** In practice a writer is seldom identified by a single character. We aggregated the CNN's test-session predictions for several digits from the same writer (one image of each selected digit) and chose the most common predicted writer, splitting ties evenly between the tied writers. This uses only the predicted labels, since the trained model's probabilities were not saved. Accuracy increases from `r pct(vote_curve[1])` with one digit to **`r pct(vote_curve[5])`** with all five (@fig-cnn-vote, left). Two digits are no better than one, because if they disagree the vote is a tie. The increase is very uneven between writers (@fig-cnn-vote, right): `r n_fixed` of the 20 writers achieve at least 90% with five digits, but `r n_stuck` (`r and_list(stuck_writers)`) remain at or below 40%. Voting removes random errors but not systematic ones. If a writer's whole session has drifted towards another writer's style, every digit points to the same wrong person, so adding digits makes the system more consistently wrong rather than more accurate. This supports Section 6: the limit on identification is the change between sessions, not noise within a session.
 
 ## 3. Siamese network for writer matching
 
