@@ -22,8 +22,10 @@ STA5073Z (Data Science for Industry) Assignment 2: writer identification and mat
     - Rotating the Siamese test writers over five folds (Task 4).
     - Updated the conclusion with these results.
     - Each addition was made on its own branch and submitted as a pull request.
+    - Prepared the presentation slides and presents most of the talk.
 
-    Both members: presentation preparation and delivery.
+    Presentation: Troy prepares the slides and presents the majority of the talk,
+    both members present part of it, as required.
 
 (b) GitHub Pages website
     https://dkmanenzhe.github.io/Msc_Stats_and_Data_Science/
