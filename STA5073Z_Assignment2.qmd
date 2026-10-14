@@ -134,7 +134,7 @@ index = image_index(0:4, 1:8, function(d, r) find_image(1, 1, d, r))
 image_grid("images/within_session.png", index, paste("Digit", 0:4),
            paste("Rep", 1:8), 1000, 650)
 
-# Simple size measures: ink is the mean pixel value; height and width count the
+# Simple size measures: ink is the mean pixel value, height and width count the
 # rows and columns that contain a pixel brighter than 50
 pixels = images[, , , 1]
 inked = pixels > 50
@@ -735,7 +735,7 @@ box()
 
 Per-writer accuracy varies widely (@fig-cnn-writer). `r text_always_right`, while writer `r names(worst)[1]` is correctly identified in `r pct(worst[1], 0)` of their test images and writer `r names(worst)[2]` in `r pct(worst[2], 0)`. The confusion table shows where the errors go. The largest are writer `r top_errors$actual[1]` labelled as writer `r top_errors$predicted[1]` (`r top_errors$n[1]` of 250 images), writer `r top_errors$actual[2]` as writer `r top_errors$predicted[2]` (`r top_errors$n[2]`) and writer `r top_errors$actual[3]` as writer `r top_errors$predicted[3]` (`r top_errors$n[3]`). These errors are concentrated, not random. Section 6 shows they are caused by session changes.
 
-**What the measures mean in practice.** Accuracy answers this question: if one of these 20 people writes a single digit on a new occasion, how often does the system name the right person? The answer is `r pct(acc_test, 0)` of the time. The per-writer accuracies and the confusion table matter in practice too, because a system that blames writer `r top_errors$predicted[1]` for writer `r top_errors$actual[1]`'s writing makes the same mistake every time, rather than occasionally. The model can only choose among the 20 writers it was trained on; it cannot say "none of these".
+**What the measures mean in practice.** Accuracy answers this question: if one of these 20 people writes a single digit on a new occasion, how often does the system name the right person? The answer is `r pct(acc_test, 0)` of the time. The per-writer accuracies and the confusion table matter in practice too, because a system that blames writer `r top_errors$predicted[1]` for writer `r top_errors$actual[1]`'s writing makes the same mistake every time, rather than occasionally. The model can only choose among the 20 writers it was trained on - it cannot say "none of these".
 
 ```{r}
 #| label: fig-cnn-vote
@@ -764,13 +764,13 @@ $$L = yD^2 + (1-y)\max(0, 1 - D)^2,$$
 
 where $y = 1$ for a pair from the same writer and $D$ is the distance. Same-writer pairs are pulled together; different-writer pairs are pushed apart until they are at least the margin (1) apart. We used Adam (learning rate 0.001), batch size 64 and 20 epochs. Triplet loss would be an alternative: it compares an anchor with a positive and a negative image at once. We chose contrastive loss because it works directly with labelled pairs.
 
-**Constructing pairs.** Writers are split *before* any pairs are made: 12 writers for training, 4 for validation (`r and_list(design$val_writers)`) and 4 for testing (`r and_list(design$test_writers)`). Within each group, `make_pairs()` from the notes picks a first image at random and then, with probability one half, a second image by the same writer (otherwise by a different writer in the same group); an image is never paired with itself. This gave `r format(design$n_train_pairs, big.mark=",")` training pairs (`r pct(design$train_same_share)` same-writer), 4,000 validation pairs and 8,000 test pairs. Because partners are drawn from all of a writer's images, pairs naturally mix same and different digits and same and different sessions.
+**Constructing pairs.** Writers are split *before* any pairs are made: 12 writers for training, 4 for validation (`r and_list(design$val_writers)`) and 4 for testing (`r and_list(design$test_writers)`). Within each group, `make_pairs()` from the notes picks a first image at random and then, with probability one half, a second image by the same writer (otherwise by a different writer in the same group), an image is never paired with itself. This gave `r format(design$n_train_pairs, big.mark=",")` training pairs (`r pct(design$train_same_share)` same-writer), 4,000 validation pairs and 8,000 test pairs. Because partners are drawn from all of a writer's images, pairs naturally mix same and different digits and same and different sessions.
 
 **Should pairs control for digit identity?** If same-writer pairs usually showed the same digit and different-writer pairs did not, the network could learn "same digit" as a shortcut for "same writer". Here the partner is chosen without regard to digit, so in the test set `r pct(share_same_digit_pos, 0)` of same-writer pairs and `r pct(share_same_digit_neg, 0)` of different-writer pairs show the same digit. Digit agreement therefore tells the network nothing about the label, and the network has to use style. Digit is still controlled at evaluation time: we report same-digit and different-digit pairs separately, and test each digit on its own (Section 6).
 
 In the test set, `r pct(mean(tp$same_session[tp$same_writer == 1]), 0)` of same-writer pairs come from the same session, which allows the session comparison in Section 6. For the digit comparison we also built five extra test sets of 2,000 pairs each, one per digit, using only test-writer images of that digit.
 
-**Threshold and evaluation.** The model outputs a distance, not a decision. As in the notes, we tried every observed validation distance as a threshold and chose the one with the highest balanced accuracy: the average of the accuracy on same-writer pairs and the accuracy on different-writer pairs. The chosen threshold is `r sprintf("%.3f", design$threshold)`; a pair is called "same writer" if its distance is below it. The threshold was then fixed and applied to the test pairs.
+**Threshold and evaluation.** The model outputs a distance, not a decision. As in the notes, we tried every observed validation distance as a threshold and chose the one with the highest balanced accuracy: the average of the accuracy on same-writer pairs and the accuracy on different-writer pairs. The chosen threshold is `r sprintf("%.3f", design$threshold)`, a pair is called "same writer" if its distance is below it. The threshold was then fixed and applied to the test pairs.
 
 ```{r}
 #| label: fig-siamese-hist
@@ -943,7 +943,7 @@ The chosen configuration (learning rate `r fmt_lr(chosen$learning_rate)`, dropou
 
 ## 6. Comparison and discussion
 
-**What each model answers.** The CNN answers "which of these 20 known people wrote this digit?" (chance 5%); the Siamese network answers "were these two digits written by the same person?" for people it has never seen (chance 50%). Their accuracies are not on the same scale and should not be ranked against each other. They are complementary: the CNN needs examples of every writer in advance but names them; the Siamese network needs no enrolment but only compares.
+**What each model answers.** The CNN answers "which of these 20 known people wrote this digit?" (chance 5%), the Siamese network answers "were these two digits written by the same person?" for people it has never seen (chance 50%). Their accuracies are not on the same scale and should not be ranked against each other. They are complementary: the CNN needs examples of every writer in advance but names them, the Siamese network needs no enrolment but only compares.
 
 ```{r}
 #| label: tbl-digits
@@ -987,6 +987,90 @@ Writer `r a1` (left) and writer `r b1` (right) across their five sessions. The C
 :::
 
 The session change also explains the CNN's worst errors. The model judged writer `r a1`'s session-5 digits to be closer to writer `r b1` than to writer `r a1`'s own training sessions (@fig-writer-pair): `r confusion[a1, b1]` of writer `r a1`'s 250 test images were labelled as writer `r b1``r text_reverse_error`. Writer `r other_error$actual`'s session-5 writing was taken for writer `r other_error$predicted` in `r confusion[other_error$actual, other_error$predicted]` of 250 images. Which writers suffer depends on the session: writer `r changed[1]` scores `r pct(writer_acc_val[changed[1]], 0)` in session 4 but `r pct(writer_acc_test[changed[1]], 0)` in session 5. When a writer's style drifts towards someone else's, the classifier assigns much of that session to the other person.
+
+```{r session-curve, include=FALSE}
+# session learning curve: train the chosen CNN on sessions 1 to k (k = 1-4) and test on
+# session 5. Done twice: with every image from those sessions, and with the training set
+# held at about 4,000 images, so that more sessions does not also mean more images.
+curve_file = "results/session_curve.csv"
+if (isTRUE(params$retrain) || !file.exists(curve_file)) {
+  library(keras3)
+  use_backend("tensorflow")
+  chosen_cfg = grid[which.max(grid$val_accuracy), ]
+  x_all = images / 255
+  y_all = metadata$person_id - 1
+  test_rows = which(metadata$session == 5)
+
+  
+  build_cnn_curve = function(learning_rate, dropout_rate) {
+    input = layer_input(shape = c(28, 28, 1))
+    output = input |>
+      layer_conv_2d(filters = 32, kernel_size = c(3, 3), activation = "relu") |>
+      layer_max_pooling_2d(pool_size = c(2, 2)) |>
+      layer_conv_2d(filters = 64, kernel_size = c(3, 3), activation = "relu") |>
+      layer_max_pooling_2d(pool_size = c(2, 2)) |>
+      layer_flatten() |>
+      layer_dense(units = 128, activation = "relu") |>
+      layer_dropout(rate = dropout_rate) |>
+      layer_dense(units = 20, activation = "softmax")
+    model = keras_model(inputs = input, outputs = output)
+    model |> compile(loss = "categorical_crossentropy",
+                     optimizer = optimizer_adam(learning_rate = learning_rate),
+                     metrics = c("accuracy"))
+    model
+  }
+
+  designs = expand.grid(n_sessions = 1:4, budget = c("all images", "fixed size"),
+                        stringsAsFactors = FALSE)
+  designs$train_images = NA
+  designs$test_accuracy = NA
+  for (i in seq_len(nrow(designs))) {
+    k = designs$n_sessions[i]
+    max_rep = if (designs$budget[i] == "all images") 50 else floor(40 / k)
+    rows_i = which(metadata$session <= k & metadata$replicate <= max_rep)
+    set_random_seed(123)
+    model = build_cnn_curve(chosen_cfg$learning_rate, chosen_cfg$dropout_rate)
+    model |> fit(x_all[rows_i, , , , drop = FALSE], to_categorical(y_all[rows_i], 20),
+                 epochs = 20, batch_size = 64, shuffle = TRUE, verbose = 0)
+    pred = max.col(predict(model, x_all[test_rows, , , , drop = FALSE], verbose = 0)) - 1
+    designs$train_images[i] = length(rows_i)
+    designs$test_accuracy[i] = mean(pred == y_all[test_rows])
+  }
+  write.csv(designs, curve_file, row.names = FALSE)
+}
+session_curve = read.csv(curve_file)
+curve_all = session_curve$test_accuracy[session_curve$budget == "all images"]
+curve_fixed = session_curve$test_accuracy[session_curve$budget == "fixed size"]
+gain_all = curve_all[4] - curve_all[1]
+gain_fixed = curve_fixed[4] - curve_fixed[1]
+text_curve = if (gain_fixed > seed_range) {
+  paste0("Spreading the same number of images over more sessions raises accuracy by ",
+         pts(gain_fixed), " points, about ", round(100 * gain_fixed / gain_all),
+         "% of the gain seen with all images, so most of the improvement comes from seeing more recording sessions rather than from more images.",
+         if (curve_fixed[4] - curve_fixed[2] <= seed_range)
+           " With the number of images fixed, however, the curve flattens after two sessions, so beyond that point the extra images also matter."
+         else "")
+} else {
+  "With the number of images fixed, the gain is no larger than seed-to-seed variation, so the improvement above comes mainly from having more images rather than more sessions."
+}
+```
+
+```{r}
+#| label: fig-session-curve
+#| fig-cap: "CNN accuracy on session 5 after training on sessions 1 to k. Solid: every image from those sessions. Dashed: training set held at about 4,000 images. Dotted line: 5% chance. Each point is one training run."
+#| fig-width: 5
+#| fig-height: 3.4
+par(mar = c(4, 4, 1, 1))
+plot(1:4, 100 * curve_all, type = "b", pch = 19, lwd = 2, ylim = c(0, 100), xaxt = "n",
+     xlab = "Number of training sessions", ylab = "Session-5 accuracy (%)")
+axis(1, at = 1:4)
+lines(1:4, 100 * curve_fixed, type = "b", pch = 17, lwd = 2, lty = 2, col = "blue")
+abline(h = 5, lty = 3)
+legend("topleft", c("All images", "About 4,000 images"), lty = 1:2, pch = c(19, 17),
+       lwd = 2, col = c("black", "blue"), bty = "n", cex = 0.8)
+```
+
+**More sessions or more images?** To verify whether more recording sessions would help, we retrained the selected CNN (same architecture, learning rate and dropout, 20 epochs) on sessions 1 to *k* for *k* = 1, ..., 4 and tested each model on session 5 (@fig-session-curve). Accuracy with one training session is `r pct(curve_all[1])` and increases to **`r pct(curve_all[4])`** with four training sessions. Because adding sessions also adds images, we repeated the experiment with the training set held at roughly 4,000 images (40 replicates from one session, 20 from each of two, 13 from each of three, or 10 from each of four sessions). With the number of images held constant, accuracy goes from `r pct(curve_fixed[1])` to `r pct(curve_fixed[4])`. `r text_curve` Each point corresponds to a single training run, so changes of `r pts(seed_range)` points or less are within seed-to-seed variation (Section 5). The four-session models also train on session 4, the validation session of Section 5. That is fine here, as no setting is selected using these results.
 
 **What would help.** The notes suggest more varied training data. Here that means more sessions per writer, since three sessions are too few to learn what stays constant about a person, and possibly data augmentation (rotation, cropping) to imitate small changes in size and slant. Larger networks or longer training would not help: the training curves show the model already fits the training sessions almost perfectly.
 
