@@ -888,8 +888,116 @@ The deck-3 notes say to fit on training data, compare settings on validation dat
 - Pixels were divided by the fixed value 255, so no scaling parameters were learned from validation or test data.
 - The CNN's hyperparameters and the Siamese threshold were chosen on validation data, and each test set was evaluated once.
 - Using one session for validation and one for test means each estimate rests on a single new occasion. Per-writer accuracy changes a lot between the two: writer `r changed[1]` scores `r pct(writer_acc_val[changed[1]], 0)` in session 4 and `r pct(writer_acc_test[changed[1]], 0)` in session 5, and writer `r changed[2]` scores `r pct(writer_acc_val[changed[2]], 0)` and `r pct(writer_acc_test[changed[2]], 0)`. Overall accuracy is more stable (`r pct(acc_val)` versus `r pct(acc_test)`).
-- The Siamese estimate rests on only four test writers, which give six different-writer combinations. Matching difficulty depends mainly on *which* two writers are compared. Among the validation writers, pairs from writers `r names(false_match)[1]` are wrongly matched only `r pct(false_match[1])` of the time, while pairs from writers `r names(false_match)[length(false_match)]` are wrongly matched `r pct(false_match[length(false_match)], 0)` of the time. A different draw of test writers could move the result by many points, which explains the gap between validation and test. Rotating which writers form the test group would give a more stable estimate.
+- The Siamese estimate rests on only four test writers, which give six different-writer combinations. Matching difficulty depends mainly on *which* two writers are compared. Among the validation writers, pairs from writers `r names(false_match)[1]` are wrongly matched only `r pct(false_match[1])` of the time, while pairs from writers `r names(false_match)[length(false_match)]` are wrongly matched `r pct(false_match[length(false_match)], 0)` of the time. A different draw of test writers could move the result by many points, which explains the gap between validation and test. We rotate the test writers below (@tbl-siamese-folds) to measure this.
 - The 8,000 test pairs are not 8,000 independent observations: images are reused across pairs and come from only 20 recordings (4 writers by 5 sessions).
+
+```{r siamese-folds, include=FALSE}
+# Rotate the Siamese test writers
+folds_file = "results/siamese_folds.csv"
+if (isTRUE(params$retrain) || !file.exists(folds_file)) {
+  library(keras3)
+  use_backend("tensorflow")
+  x_all = images / 255
+  writer_of = metadata$person_id
+
+ 
+  make_pairs_f = function(ids, n) {
+    a = sample(ids, n, replace = TRUE)
+    b = vapply(a, function(i) {
+      same = runif(1) < .5
+      pool = if (same) ids[writer_of[ids] == writer_of[i]] else ids[writer_of[ids] != writer_of[i]]
+      sample(setdiff(pool, i), 1)
+    }, integer(1))
+    cbind(a, b)
+  }
+  pair_inputs = function(p) list(x_all[p[, 1], , , , drop = FALSE], x_all[p[, 2], , , , drop = FALSE])
+  pair_labels = function(p) as.integer(writer_of[p[, 1]] == writer_of[p[, 2]])
+  contrastive_loss_f = function(y, d) {
+    op_mean(y * op_square(d) + (1 - y) * op_square(op_maximum(1 - d, 0)))
+  }
+  build_siamese = function() {
+    image = layer_input(shape = c(28, 28, 1))
+    embedding = image |>
+      layer_conv_2d(32, 3, activation = "relu") |>
+      layer_max_pooling_2d(2) |>
+      layer_conv_2d(64, 3, activation = "relu") |>
+      layer_global_average_pooling_2d() |>
+      layer_dense(32)
+    encoder = keras_model(image, embedding)
+    a = layer_input(shape = c(28, 28, 1))
+    b = layer_input(shape = c(28, 28, 1))
+    distance = list(encoder(a), encoder(b)) |>
+      layer_lambda(f = function(z) {
+        op_sqrt(op_sum(op_square(z[[1]] - z[[2]]), axis = 2, keepdims = TRUE) + 1e-7)
+      })
+    model = keras_model(list(a, b), distance)
+    model |> compile(optimizer = optimizer_adam(1e-3), loss = contrastive_loss_f)
+    model
+  }
+  balanced_at = function(d, y, cut) (mean(d[y == 1] < cut) + mean(d[y == 0] >= cut)) / 2
+
+  set.seed(2026)
+  groups = split(sample(1:20), rep(1:5, each = 4))
+  folds = data.frame(fold = 1:5, test_writers = NA, threshold = NA, val_balanced = NA,
+                     test_same_acc = NA, test_diff_acc = NA, test_balanced = NA, test_auc = NA)
+  for (f in 1:5) {
+    test_w = groups[[f]]
+    val_w = groups[[(f - 2) %% 5 + 1]]
+    train_w = setdiff(1:20, c(test_w, val_w))
+    ids_f = lapply(list(train = train_w, val = val_w, test = test_w),
+                   function(w) which(writer_of %in% w))
+    set.seed(25 + f)
+    p = list(train = make_pairs_f(ids_f$train, 20000), val = make_pairs_f(ids_f$val, 4000),
+             test = make_pairs_f(ids_f$test, 8000))
+    set_random_seed(123 + f)
+    model = build_siamese()
+    model |> fit(pair_inputs(p$train), matrix(pair_labels(p$train), ncol = 1),
+                 epochs = 20, batch_size = 64, verbose = 0)
+    d_val = as.numeric(predict(model, pair_inputs(p$val), verbose = 0))
+    d_test = as.numeric(predict(model, pair_inputs(p$test), verbose = 0))
+    y_val = pair_labels(p$val)
+    y_test = pair_labels(p$test)
+    cands = sort(unique(d_val))
+    scores = vapply(cands, function(cut) balanced_at(d_val, y_val, cut), numeric(1))
+    cut = cands[which.max(scores)]
+    folds$test_writers[f] = paste(sort(test_w), collapse = ", ")
+    folds$threshold[f] = cut
+    folds$val_balanced[f] = max(scores)
+    folds$test_same_acc[f] = mean(d_test[y_test == 1] < cut)
+    folds$test_diff_acc[f] = mean(d_test[y_test == 0] >= cut)
+    folds$test_balanced[f] = balanced_at(d_test, y_test, cut)
+    folds$test_auc[f] = auc(d_test, y_test)
+  }
+  write.csv(folds, folds_file, row.names = FALSE)
+}
+siamese_folds = read.csv(folds_file)
+fold_bal = siamese_folds$test_balanced
+fold_auc = siamese_folds$test_auc
+text_single_split = if (s_test$balanced < min(fold_bal)) {
+  paste0("lower than every fold. Fold 5, which uses the same writers, scores ",
+         pct(siamese_folds$test_balanced[5]), " (AUC ", sprintf("%.2f", siamese_folds$test_auc[5]),
+         "), so the difference reflects run-to-run variation from new pairs and a new seed as well as the choice of writers")
+} else if (s_test$balanced > max(fold_bal)) {
+  "higher than every fold, so the Section 3 test writers happen to be an unusually easy group"
+} else {
+  "within the range of the folds"
+}
+worst = which.max(abs(siamese_folds$test_same_acc - siamese_folds$test_diff_acc))
+```
+
+```{r}
+#| label: tbl-siamese-folds
+#| tbl-cap: "Siamese network with the test writers rotated over five folds. Each fold trains on 12 writers, chooses the threshold on 4 others and tests on the 4 listed (8,000 pairs)."
+knitr::kable(data.frame(Fold = siamese_folds$fold,
+                        `Test writers` = siamese_folds$test_writers,
+                        `Same pairs accepted` = pct(siamese_folds$test_same_acc),
+                        `Different pairs rejected` = pct(siamese_folds$test_diff_acc),
+                        `Balanced acc.` = pct(fold_bal),
+                        AUC = sprintf("%.2f", fold_auc),
+                        check.names = FALSE))
+```
+
+**Rotating the test writers.** The Section 3 estimate is based on four writers, so we performed the entire Siamese procedure five times, testing on a different set of four writers each time, selecting the threshold on another set, and training on the remaining twelve (@tbl-siamese-folds). Fold 5 uses the same writer split as Section 3, but with newly drawn pairs and a new seed. Balanced accuracy across folds ranges from `r pct(min(fold_bal))` to `r pct(max(fold_bal))` (mean **`r pct(mean(fold_bal))`**, standard deviation `r pts(sd(fold_bal))` points) and AUC from `r sprintf("%.2f", min(fold_auc))` to `r sprintf("%.2f", max(fold_auc))` (mean `r sprintf("%.2f", mean(fold_auc))`). The single split in Section 3 (`r pct(s_test$balanced)`) is `r text_single_split`. Each writer is tested exactly once over the folds, so the fold average is a better indication of matching unseen writers than any single split, although each fold still uses just four writers. The folds also show a weakness of a fixed threshold: in fold `r worst`, the threshold chosen on other writers accepts `r pct(siamese_folds$test_same_acc[worst])` of same-writer pairs and rejects `r pct(siamese_folds$test_diff_acc[worst])` of different-writer pairs, so a threshold tuned on one group of writers does not always suit another. AUC, which does not depend on the threshold, stays at `r sprintf("%.2f", siamese_folds$test_auc[worst])` for that fold.
 
 ## 5. Limited hyperparameter optimisation (CNN)
 

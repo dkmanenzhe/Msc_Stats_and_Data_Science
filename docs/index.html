@@ -585,9 +585,85 @@ Table&nbsp;4: Data splits.
 <li>Pixels were divided by the fixed value 255, so no scaling parameters were learned from validation or test data.</li>
 <li>The CNN’s hyperparameters and the Siamese threshold were chosen on validation data, and each test set was evaluated once.</li>
 <li>Using one session for validation and one for test means each estimate rests on a single new occasion. Per-writer accuracy changes a lot between the two: writer 7 scores 30% in session 4 and 100% in session 5, and writer 6 scores 24% and 79%. Overall accuracy is more stable (55.1% versus 56.1%).</li>
-<li>The Siamese estimate rests on only four test writers, which give six different-writer combinations. Matching difficulty depends mainly on <em>which</em> two writers are compared. Among the validation writers, pairs from writers 3 and 18 are wrongly matched only 0.6% of the time, while pairs from writers 3 and 7 are wrongly matched 78% of the time. A different draw of test writers could move the result by many points, which explains the gap between validation and test. Rotating which writers form the test group would give a more stable estimate.</li>
+<li>The Siamese estimate rests on only four test writers, which give six different-writer combinations. Matching difficulty depends mainly on <em>which</em> two writers are compared. Among the validation writers, pairs from writers 3 and 18 are wrongly matched only 0.6% of the time, while pairs from writers 3 and 7 are wrongly matched 78% of the time. A different draw of test writers could move the result by many points, which explains the gap between validation and test. We rotate the test writers below (<a href="#tbl-siamese-folds" class="quarto-xref">Table&nbsp;5</a>) to measure this.</li>
 <li>The 8,000 test pairs are not 8,000 independent observations: images are reused across pairs and come from only 20 recordings (4 writers by 5 sessions).</li>
 </ul>
+<div class="cell">
+<div id="tbl-siamese-folds" class="cell quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-siamese-folds-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table&nbsp;5: Siamese network with the test writers rotated over five folds. Each fold trains on 12 writers, chooses the threshold on 4 others and tests on the 4 listed (8,000 pairs).
+</figcaption>
+<div aria-describedby="tbl-siamese-folds-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="cell-output-display">
+<table class="do-not-create-environment cell caption-top table table-sm table-striped small">
+<colgroup>
+<col style="width: 6%">
+<col style="width: 16%">
+<col style="width: 24%">
+<col style="width: 30%">
+<col style="width: 16%">
+<col style="width: 6%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: right;">Fold</th>
+<th style="text-align: left;">Test writers</th>
+<th style="text-align: left;">Same pairs accepted</th>
+<th style="text-align: left;">Different pairs rejected</th>
+<th style="text-align: left;">Balanced acc.</th>
+<th style="text-align: left;">AUC</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: right;">1</td>
+<td style="text-align: left;">1, 6, 13, 15</td>
+<td style="text-align: left;">65.0%</td>
+<td style="text-align: left;">82.0%</td>
+<td style="text-align: left;">73.5%</td>
+<td style="text-align: left;">0.84</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">2</td>
+<td style="text-align: left;">4, 5, 11, 12</td>
+<td style="text-align: left;">92.4%</td>
+<td style="text-align: left;">45.6%</td>
+<td style="text-align: left;">69.0%</td>
+<td style="text-align: left;">0.81</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">3</td>
+<td style="text-align: left;">2, 8, 10, 17</td>
+<td style="text-align: left;">68.5%</td>
+<td style="text-align: left;">81.5%</td>
+<td style="text-align: left;">75.0%</td>
+<td style="text-align: left;">0.84</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">4</td>
+<td style="text-align: left;">3, 7, 18, 20</td>
+<td style="text-align: left;">88.7%</td>
+<td style="text-align: left;">80.8%</td>
+<td style="text-align: left;">84.8%</td>
+<td style="text-align: left;">0.92</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">5</td>
+<td style="text-align: left;">9, 14, 16, 19</td>
+<td style="text-align: left;">75.6%</td>
+<td style="text-align: left;">66.2%</td>
+<td style="text-align: left;">70.9%</td>
+<td style="text-align: left;">0.78</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</figure>
+</div>
+</div>
+<p><strong>Rotating the test writers.</strong> The Section 3 estimate is based on four writers, so we performed the entire Siamese procedure five times, testing on a different set of four writers each time, selecting the threshold on another set, and training on the remaining twelve (<a href="#tbl-siamese-folds" class="quarto-xref">Table&nbsp;5</a>). Fold 5 uses the same writer split as Section 3, but with newly drawn pairs and a new seed. Balanced accuracy across folds ranges from 69.0% to 84.8% (mean <strong>74.6%</strong>, standard deviation 6.1 points) and AUC from 0.78 to 0.92 (mean 0.84). The single split in Section 3 (68.2%) is lower than every fold. Fold 5, which uses the same writers, scores 70.9% (AUC 0.78), so the difference reflects run-to-run variation from new pairs and a new seed as well as the choice of writers. Each writer is tested exactly once over the folds, so the fold average is a better indication of matching unseen writers than any single split, although each fold still uses just four writers. The folds also show a weakness of a fixed threshold: in fold 2, the threshold chosen on other writers accepts 92.4% of same-writer pairs and rejects 45.6% of different-writer pairs, so a threshold tuned on one group of writers does not always suit another. AUC, which does not depend on the threshold, stays at 0.81 for that fold.</p>
 </section>
 <section id="limited-hyperparameter-optimisation-cnn" class="level2">
 <h2 class="anchored" data-anchor-id="limited-hyperparameter-optimisation-cnn">5. Limited hyperparameter optimisation (CNN)</h2>
@@ -596,7 +672,7 @@ Table&nbsp;4: Data splits.
 <div id="tbl-grid" class="cell quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-tbl figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-grid-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Table&nbsp;5: CNN grid search (validation = session 4). Configuration 4 has the highest validation accuracy.
+Table&nbsp;6: CNN grid search (validation = session 4). Configuration 4 has the highest validation accuracy.
 </figcaption>
 <div aria-describedby="tbl-grid-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="cell-output-display">
@@ -683,7 +759,7 @@ Figure&nbsp;9: Validation accuracy (left) and validation loss (right) by epoch f
 <div id="tbl-seeds" class="cell quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-tbl figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-seeds-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Table&nbsp;6: Chosen configuration retrained with different seeds.
+Table&nbsp;7: Chosen configuration retrained with different seeds.
 </figcaption>
 <div aria-describedby="tbl-seeds-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="cell-output-display">
@@ -729,7 +805,7 @@ Table&nbsp;6: Chosen configuration retrained with different seeds.
 <div id="tbl-digits" class="cell quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-tbl figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-digits-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Table&nbsp;7: Writer information by digit. CNN: test-session identification accuracy. Siamese: extra test sets of 2,000 same-digit pairs per digit from the unseen writers, at the validation-chosen threshold.
+Table&nbsp;8: Writer information by digit. CNN: test-session identification accuracy. Siamese: extra test sets of 2,000 same-digit pairs per digit from the unseen writers, at the validation-chosen threshold.
 </figcaption>
 <div aria-describedby="tbl-digits-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="cell-output-display">
@@ -806,7 +882,7 @@ Table&nbsp;7: Writer information by digit. CNN: test-session identification accu
 <div id="tbl-sessions" class="cell quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-tbl figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-sessions-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Table&nbsp;8: Effect of recording session on performance.
+Table&nbsp;9: Effect of recording session on performance.
 </figcaption>
 <div aria-describedby="tbl-sessions-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="cell-output-display">
@@ -856,7 +932,7 @@ Table&nbsp;8: Effect of recording session on performance.
 </figure>
 </div>
 </div>
-<p><strong>How session changes affect performance.</strong> The session effect is the main finding of this assignment (<a href="#tbl-sessions" class="quarto-xref">Table&nbsp;8</a>). The CNN identifies writers 100% of the time in recordings it has seen, even from images it has never trained on, but only 56% of the time in a new session. That gap of 44 percentage points comes from learning the particular look of each recording rather than the person. The Siamese network shows the same pattern on unseen writers: a true match is accepted 91.4% of the time when both images come from one session but 79.3% when they come from different sessions.</p>
+<p><strong>How session changes affect performance.</strong> The session effect is the main finding of this assignment (<a href="#tbl-sessions" class="quarto-xref">Table&nbsp;9</a>). The CNN identifies writers 100% of the time in recordings it has seen, even from images it has never trained on, but only 56% of the time in a new session. That gap of 44 percentage points comes from learning the particular look of each recording rather than the person. The Siamese network shows the same pattern on unseen writers: a true match is accepted 91.4% of the time when both images come from one session but 79.3% when they come from different sessions.</p>
 <div id="fig-writer-pair" class="quarto-layout-panel">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-writer-pair-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
