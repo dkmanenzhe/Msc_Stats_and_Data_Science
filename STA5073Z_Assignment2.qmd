@@ -453,6 +453,45 @@ accept_cross_session = mean(tp$predicted_same[same_writer & !tp$same_session])
 accept_same_digit = mean(tp$predicted_same[same_writer & tp$same_digit])
 accept_cross_digit = mean(tp$predicted_same[same_writer & !tp$same_digit])
 
+
+# Threshold-free Siamese measures (a smaller distance means "more likely the same writer").
+# AUC
+
+auc = function(d, same) {
+  r = rank(d)
+  n_diff = sum(same == 0)
+  n_same = sum(same == 1)
+  (sum(r[same == 0]) - n_diff * (n_diff + 1) / 2) / (n_diff * n_same)
+}
+# ROC curve
+roc = function(d, same) {
+  same = same[order(d)]
+  data.frame(false_match = c(0, cumsum(same == 0) / sum(same == 0)),
+             true_match = c(0, cumsum(same == 1) / sum(same == 1)))
+}
+# Equal error rate
+eer = function(d, same) {
+  curve = roc(d, same)
+  missed = 1 - curve$true_match
+  i = which.min(abs(curve$false_match - missed))
+  (curve$false_match[i] + missed[i]) / 2
+}
+auc_test = auc(tp$distance, tp$same_writer)
+auc_val = auc(vp$distance, vp$same_writer)
+eer_test = eer(tp$distance, tp$same_writer)
+roc_test = roc(tp$distance, tp$same_writer)
+auc_digit = sapply(0:4, function(k) {
+  q = filter(pairs, set == paste("digit", k))
+  auc(q$distance, q$same_writer)
+})
+# Same-writer pairs from one session, or from two sessions against all different-writer pairs
+in_same = !same_writer | tp$same_session
+in_cross = !same_writer | !tp$same_session
+auc_same_session = auc(tp$distance[in_same], tp$same_writer[in_same])
+auc_cross_session = auc(tp$distance[in_cross], tp$same_writer[in_cross])
+roc_same_session = roc(tp$distance[in_same], tp$same_writer[in_same])
+roc_cross_session = roc(tp$distance[in_cross], tp$same_writer[in_cross])
+
 # How often each combination of two validation writers is wrongly matched
 vd = filter(vp, same_writer == 0)
 vd$combo = paste(pmin(vd$writer_left, vd$writer_right),
@@ -722,6 +761,30 @@ knitr::kable(as.data.frame.matrix(outcomes))
 
 On the 8,000 test pairs from unseen writers, the network accepts `r pct(s_test$same_acc)` of same-writer pairs and correctly rejects `r pct(s_test$diff_acc)` of different-writer pairs, giving a balanced accuracy of **`r pct(s_test$balanced)`** (chance is 50%). In practice, if the system is asked "did the same person write these two digits?" about two people it has never seen, it confirms a true match `r pct(s_test$same_acc, 0)` of the time and wrongly links two different people `r pct(1 - s_test$diff_acc, 0)` of the time. `r text_error_balance` The two distance distributions in @fig-siamese-hist overlap heavily, which is why no threshold can avoid both kinds of error. On the validation writers the same threshold gave `r pct(s_val$balanced)` balanced accuracy, `r round(100 * abs(s_val$balanced - s_test$balanced))` points `r if (s_val$balanced > s_test$balanced) "higher" else "lower"` than on the test writers. Section 4 explains this gap.
 
+
+```{r}
+#| label: fig-siamese-roc
+#| fig-cap: "ROC curves for the test pairs: all pairs, and same-writer pairs from one session or from two different sessions (each against all different-writer pairs). The dot marks the validation-chosen threshold, the grey diagonal is chance."
+#| fig-width: 4.6
+#| fig-height: 4.2
+par(mar = c(4, 4, 1, 1))
+plot(roc_test$false_match, roc_test$true_match, type = "l", lwd = 2,
+     xlim = c(0, 1), ylim = c(0, 1), asp = 1,
+     xlab = "False-match rate (different writers accepted)",
+     ylab = "True-match rate (same writer accepted)")
+lines(roc_same_session$false_match, roc_same_session$true_match, lwd = 2, lty = 2, col = "blue")
+lines(roc_cross_session$false_match, roc_cross_session$true_match, lwd = 2, lty = 3, col = "red")
+abline(0, 1, col = "grey")
+points(1 - s_test$diff_acc, s_test$same_acc, pch = 19)
+legend("bottomright",
+       c(sprintf("All test pairs (AUC %.2f)", auc_test),
+         sprintf("Same session (AUC %.2f)", auc_same_session),
+         sprintf("Different sessions (AUC %.2f)", auc_cross_session)),
+       lty = 1:3, lwd = 2, col = c("black", "blue", "red"), bty = "n", cex = 0.75)
+```
+
+**Threshold-free evaluation.** Balanced accuracy is a threshold-dependent metric. The ROC curve (@fig-siamese-roc) displays all feasible thresholds at once: each point indicates the proportion of true matches accepted against the proportion of different-writer pairs falsely accepted. The area under the curve (AUC) is the probability that a randomly chosen different-writer pair is further apart than a randomly chosen same-writer pair, so 0.5 is chance and 1 is perfect separation. The AUC is **`r sprintf("%.2f", auc_test)`** on the test writers and `r sprintf("%.2f", auc_val)` on the validation writers. The equal error rate is `r pct(eer_test)`: this is the error rate at the threshold where false matches and missed matches are equally common, and it is the traditional single-number summary for verification systems such as signature checking. The curves also separate by session: the AUC is `r sprintf("%.2f", auc_same_session)` when a same-writer pair comes from one session and `r sprintf("%.2f", auc_cross_session)` when it comes from two. The session effect addressed in Section 6 is therefore not a side-effect of where the threshold was placed.
+
 ```{r}
 #| label: fig-siamese-examples
 #| fig-cap: "Example test pairs in each outcome group, with their distances."
@@ -846,10 +909,11 @@ knitr::kable(data.frame(Digit = 0:4,
                         `Same pairs accepted` = pct(s_digit$same_acc),
                         `Different pairs rejected` = pct(s_digit$diff_acc),
                         `Siamese balanced acc.` = pct(s_digit$balanced),
+                        `Siamese AUC` = sprintf("%.2f", auc_digit),
                         check.names = FALSE))
 ```
 
-**Which digits carry more writer information?** Ranked from most to least informative, the CNN orders the digits `r paste(cnn_rank, collapse = ", ")` and the Siamese network orders them `r paste(siamese_rank, collapse = ", ")`. `r text_digit_agreement` The Siamese network's weakest digit is `r siamese_worst`: it accepts `r pct(s_digit$same_acc[siamese_worst + 1], 0)` of same-writer pairs but rejects only `r pct(s_digit$diff_acc[siamese_worst + 1], 0)` of different-writer pairs, so the four test writers' `r siamese_worst`s sit close together in the embedding. A digit's ranking therefore depends on the model and on which writers are being compared, and only the broad pattern should be taken seriously.
+**Which digits carry more writer information?** Ranked from most to least informative, the CNN orders the digits `r paste(cnn_rank, collapse = ", ")` and the Siamese network orders them `r paste(siamese_rank, collapse = ", ")`. `r text_digit_agreement` The Siamese network's weakest digit is `r siamese_worst`: it accepts `r pct(s_digit$same_acc[siamese_worst + 1], 0)` of same-writer pairs but rejects only `r pct(s_digit$diff_acc[siamese_worst + 1], 0)` of different-writer pairs, so the four test writers' `r siamese_worst`s sit close together in the embedding. The threshold-free AUC ranks the digits `r paste(order(auc_digit, decreasing = TRUE) - 1, collapse = ", ")`, with digit `r which.min(auc_digit) - 1` lowest (`r sprintf("%.2f", min(auc_digit))`). `r sum(auc_digit > auc_test)` of the five single-digit AUCs are above the AUC of `r sprintf("%.2f", auc_test)` for the main test set, whose pairs mostly show two different digits. A digit's ranking therefore depends on the model and on which writers are being compared, and only the broad pattern should be taken seriously.
 
 Comparing whole pairs makes the same point. On the main test set, same-writer pairs are accepted `r pct(accept_same_digit)` of the time when both images show the same digit and `r pct(accept_cross_digit)` when they show different digits. `r text_cross_digit` network still matches across digits well above chance, so some of what it learns is a general style (size, slant, stroke width) rather than the shape of one digit.
 
