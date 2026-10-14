@@ -884,6 +884,20 @@ The session change also explains the CNN's worst errors. The model judged writer
 
 **Conclusion.** The CNN identifies the writer of a single digit from a new session `r pct(acc_test, 0)` of the time (chance 5%). The Siamese network matches pairs from unseen writers with `r pct(s_test$balanced, 0)` balanced accuracy (chance 50%). `r text_digit_conclusion` Changes between recording sessions are the main obstacle in this data: performance on familiar sessions is far higher than on new ones. Only splits that hold out whole sessions or writers reveal this.
 
+## Plagiarism declaration
+
+We know that plagiarism is wrong. Plagiarism is to use another's work and pretend that it is one's own. We have used the required convention for citation and referencing: each contribution to, and quotation in, this assignment from the work of other people has been attributed and has been cited and referenced. This assignment is our own work. We have not allowed, and will not allow, anyone to copy our work with the intention of passing it off as their own work.
+
+Dakalo Manenzhe (MNNDAK002) and Troy Bisnath (BSNTRO001)
+
+## AI use statement
+
+We used generative AI tools in preparing this assignment, as follows.
+
+- **[Tool name], used by Dakalo:** [what it was used for].
+- **Claude (Anthropic), used by Troy:** suggesting additional analyses, and help with the Git/GitHub workflow.
+
+All AI output was checked and edited by us. The analysis choices, interpretation of results and final text are our own, and we take full responsibility for the content of this report.
 
 ## Appendix A: code
 
