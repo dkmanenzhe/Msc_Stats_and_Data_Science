@@ -1,8 +1,31 @@
 STA5073Z (Data Science for Industry) Assignment 2: writer identification and matching
 
 (a) Group members and roles
-    Manenzhe Dakalo (MNNDAK002): [describe what Dakalo did]
-    Troy Bisnath (BSNTRO001): [describe what Troy did]
+
+    Dakalo Manenzhe (MNNDAK002):
+    - Set up the GitHub repository, Quarto website and GitHub Pages deployment.
+    - Data exploration and image grids (Task 1).
+    - CNN writer identification, including the session-based train/validation/test
+      split and the same-session check (Tasks 2 and 4).
+    - Siamese network with contrastive loss, pair construction and threshold choice (Task 3).
+    - CNN hyperparameter grid and seed check (Task 5).
+    - First draft of the comparison and discussion (Task 6) and the report structure.
+    - Reviewed and merged Troy's pull requests.
+
+    Troy Bisnath (BSNTRO001):
+    - Plagiarism declaration and AI use statement.
+    - Threshold-free Siamese evaluation: ROC curves, AUC and equal error rate,
+      overall, by session and by digit (Tasks 3 and 6).
+    - Combining several digits per writer by majority vote (Task 2).
+    - Session learning curve: training on 1-4 sessions, with and without a fixed
+      number of images (Tasks 4 and 6).
+    - Rotating the Siamese test writers over five folds (Task 4).
+    - Updated the conclusion with these results.
+    - Each addition was made on its own branch and submitted as a pull request.
+    - Prepared the presentation slides and presents most of the talk.
+
+    Presentation: Troy prepares the slides and presents the majority of the talk,
+    both members present part of it, as required.
 
 (b) GitHub Pages website
     https://dkmanenzhe.github.io/Msc_Stats_and_Data_Science/
