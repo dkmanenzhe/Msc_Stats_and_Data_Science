@@ -398,6 +398,21 @@ Figure&nbsp;4: Left: test accuracy for each writer (dashed line: 5% chance). Rig
 </div>
 <p>Per-writer accuracy varies widely (<a href="#fig-cnn-writer" class="quarto-xref">Figure&nbsp;4</a>). Writers 7 and 18 are always identified, while writer 5 is correctly identified in 0% of their test images and writer 13 in 1%. The confusion table shows where the errors go. The largest are writer 10 labelled as writer 2 (222 of 250 images), writer 5 as writer 13 (198) and writer 13 as writer 5 (95). These errors are concentrated, not random. Section 6 shows they are caused by session changes.</p>
 <p><strong>What the measures mean in practice.</strong> Accuracy answers this question: if one of these 20 people writes a single digit on a new occasion, how often does the system name the right person? The answer is 56% of the time. The per-writer accuracies and the confusion table matter in practice too, because a system that blames writer 2 for writer 10’s writing makes the same mistake every time, rather than occasionally. The model can only choose among the 20 writers it was trained on; it cannot say “none of these”.</p>
+<div class="cell">
+<div class="cell-output-display">
+<div id="fig-cnn-vote" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-cnn-vote-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="STA5073Z_Assignment2_files/figure-html/fig-cnn-vote-1.png" class="img-fluid figure-img" width="720">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-cnn-vote-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;5: Combining digits from the same writer and test session by majority vote. Left: accuracy against the number of digits combined (dashed line: 5% chance). Right: each writer’s accuracy from one digit against five digits, the grey line marks no change. Only writers below 95% with five digits are labelled.
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p><strong>Combining several digits.</strong> In practice a writer is seldom identified by a single character. We aggregated the CNN’s test-session predictions for several digits from the same writer (one image of each selected digit) and chose the most common predicted writer, splitting ties evenly between the tied writers. This uses only the predicted labels, since the trained model’s probabilities were not saved. Accuracy increases from 56.1% with one digit to <strong>75.6%</strong> with all five (<a href="#fig-cnn-vote" class="quarto-xref">Figure&nbsp;5</a>, left). Two digits are no better than one, because if they disagree the vote is a tie. The increase is very uneven between writers (<a href="#fig-cnn-vote" class="quarto-xref">Figure&nbsp;5</a>, right): 14 of the 20 writers achieve at least 90% with five digits, but 5 (1, 5, 8, 10 and 13) remain at or below 40%. Voting removes random errors but not systematic ones. If a writer’s whole session has drifted towards another writer’s style, every digit points to the same wrong person, so adding digits makes the system more consistently wrong rather than more accurate. This supports Section 6: the limit on identification is the change between sessions, not noise within a session.</p>
 </section>
 <section id="siamese-network-for-writer-matching" class="level2">
 <h2 class="anchored" data-anchor-id="siamese-network-for-writer-matching">3. Siamese network for writer matching</h2>
@@ -416,7 +431,7 @@ Figure&nbsp;4: Left: test accuracy for each writer (dashed line: 5% chance). Rig
 <img src="STA5073Z_Assignment2_files/figure-html/fig-siamese-hist-1.png" class="img-fluid figure-img" width="720">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-siamese-hist-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;5: Left: contrastive loss by epoch. Right: test distances for same-writer and different-writer pairs, with the validation-chosen threshold.
+Figure&nbsp;6: Left: contrastive loss by epoch. Right: test distances for same-writer and different-writer pairs, with the validation-chosen threshold.
 </figcaption>
 </figure>
 </div>
@@ -456,7 +471,7 @@ Table&nbsp;3: Test pairs (four unseen writers): actual against predicted.
 </figure>
 </div>
 </div>
-<p>On the 8,000 test pairs from unseen writers, the network accepts 81.7% of same-writer pairs and correctly rejects 54.6% of different-writer pairs, giving a balanced accuracy of <strong>68.2%</strong> (chance is 50%). In practice, if the system is asked “did the same person write these two digits?” about two people it has never seen, it confirms a true match 82% of the time and wrongly links two different people 45% of the time. It is therefore much better at confirming genuine matches than at excluding different writers. The two distance distributions in <a href="#fig-siamese-hist" class="quarto-xref">Figure&nbsp;5</a> overlap heavily, which is why no threshold can avoid both kinds of error. On the validation writers the same threshold gave 81.4% balanced accuracy, 13 points higher than on the test writers. Section 4 explains this gap.</p>
+<p>On the 8,000 test pairs from unseen writers, the network accepts 81.7% of same-writer pairs and correctly rejects 54.6% of different-writer pairs, giving a balanced accuracy of <strong>68.2%</strong> (chance is 50%). In practice, if the system is asked “did the same person write these two digits?” about two people it has never seen, it confirms a true match 82% of the time and wrongly links two different people 45% of the time. It is therefore much better at confirming genuine matches than at excluding different writers. The two distance distributions in <a href="#fig-siamese-hist" class="quarto-xref">Figure&nbsp;6</a> overlap heavily, which is why no threshold can avoid both kinds of error. On the validation writers the same threshold gave 81.4% balanced accuracy, 13 points higher than on the test writers. Section 4 explains this gap.</p>
 <div class="cell">
 <div class="cell-output-display">
 <div id="fig-siamese-roc" class="quarto-float quarto-figure quarto-figure-center anchored">
@@ -465,13 +480,13 @@ Table&nbsp;3: Test pairs (four unseen writers): actual against predicted.
 <img src="STA5073Z_Assignment2_files/figure-html/fig-siamese-roc-1.png" class="img-fluid figure-img" width="441">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-siamese-roc-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;6: ROC curves for the test pairs: all pairs, and same-writer pairs from one session or from two different sessions (each against all different-writer pairs). The dot marks the validation-chosen threshold, the grey diagonal is chance.
+Figure&nbsp;7: ROC curves for the test pairs: all pairs, and same-writer pairs from one session or from two different sessions (each against all different-writer pairs). The dot marks the validation-chosen threshold, the grey diagonal is chance.
 </figcaption>
 </figure>
 </div>
 </div>
 </div>
-<p><strong>Threshold-free evaluation.</strong> Balanced accuracy is a threshold-dependent metric. The ROC curve (<a href="#fig-siamese-roc" class="quarto-xref">Figure&nbsp;6</a>) displays all feasible thresholds at once: each point indicates the proportion of true matches accepted against the proportion of different-writer pairs falsely accepted. The area under the curve (AUC) is the probability that a randomly chosen different-writer pair is further apart than a randomly chosen same-writer pair, so 0.5 is chance and 1 is perfect separation. The AUC is <strong>0.76</strong> on the test writers and 0.89 on the validation writers. The equal error rate is 30.9%: this is the error rate at the threshold where false matches and missed matches are equally common, and it is the traditional single-number summary for verification systems such as signature checking. The curves also separate by session: the AUC is 0.86 when a same-writer pair comes from one session and 0.74 when it comes from two. The session effect addressed in Section 6 is therefore not a side-effect of where the threshold was placed.</p>
+<p><strong>Threshold-free evaluation.</strong> Balanced accuracy is a threshold-dependent metric. The ROC curve (<a href="#fig-siamese-roc" class="quarto-xref">Figure&nbsp;7</a>) displays all feasible thresholds at once: each point indicates the proportion of true matches accepted against the proportion of different-writer pairs falsely accepted. The area under the curve (AUC) is the probability that a randomly chosen different-writer pair is further apart than a randomly chosen same-writer pair, so 0.5 is chance and 1 is perfect separation. The AUC is <strong>0.76</strong> on the test writers and 0.89 on the validation writers. The equal error rate is 30.9%: this is the error rate at the threshold where false matches and missed matches are equally common, and it is the traditional single-number summary for verification systems such as signature checking. The curves also separate by session: the AUC is 0.86 when a same-writer pair comes from one session and 0.74 when it comes from two. The session effect addressed in Section 6 is therefore not a side-effect of where the threshold was placed.</p>
 <div class="cell">
 <div class="cell-output-display">
 <div id="fig-siamese-examples" class="quarto-float quarto-figure quarto-figure-center anchored">
@@ -480,7 +495,7 @@ Figure&nbsp;6: ROC curves for the test pairs: all pairs, and same-writer pairs f
 <img src="STA5073Z_Assignment2_files/figure-html/fig-siamese-examples-1.png" class="img-fluid figure-img" width="700">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-siamese-examples-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;7: Example test pairs in each outcome group, with their distances.
+Figure&nbsp;8: Example test pairs in each outcome group, with their distances.
 </figcaption>
 </figure>
 </div>
@@ -658,7 +673,7 @@ Table&nbsp;5: CNN grid search (validation = session 4). Configuration 4 has the 
 <img src="STA5073Z_Assignment2_files/figure-html/fig-grid-curves-1.png" class="img-fluid figure-img" width="720">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-grid-curves-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;8: Validation accuracy (left) and validation loss (right) by epoch for the four configurations.
+Figure&nbsp;9: Validation accuracy (left) and validation loss (right) by epoch for the four configurations.
 </figcaption>
 </figure>
 </div>
@@ -702,7 +717,7 @@ Table&nbsp;6: Chosen configuration retrained with different seeds.
 <p><strong>Sensitivity.</strong></p>
 <ul>
 <li><strong>Validation accuracy is not very sensitive.</strong> It ranges from 51.5% to 55.1%, a spread of 3.6 percentage points. The smaller learning rate is better at both dropout rates (by 3.0 and 2.5 points). Raising dropout from 0.2 to 0.5 changes validation accuracy by 1.0 and 0.6 points. Changing only the seed moves the chosen configuration’s validation accuracy by 2.0 points, 56% of the grid’s spread. Only the learning-rate effect is consistent and larger than the seed-to-seed variation; the dropout effect cannot be told apart from training noise.</li>
-<li><strong>Validation loss is very sensitive.</strong> At learning rate 0.001 it averages 4.55, against 2.67 at 0.0001. With the larger learning rate, validation loss is lowest after epoch 1 and then climbs, while validation accuracy barely changes (<a href="#fig-grid-curves" class="quarto-xref">Figure&nbsp;8</a>). The model becomes increasingly <em>confident</em> about the wrong writer on the new session. The slower learning rate delays this overfitting but does not remove it.</li>
+<li><strong>Validation loss is very sensitive.</strong> At learning rate 0.001 it averages 4.55, against 2.67 at 0.0001. With the larger learning rate, validation loss is lowest after epoch 1 and then climbs, while validation accuracy barely changes (<a href="#fig-grid-curves" class="quarto-xref">Figure&nbsp;9</a>). The model becomes increasingly <em>confident</em> about the wrong writer on the new session. The slower learning rate delays this overfitting but does not remove it.</li>
 <li><strong>Training and same-session accuracy are hardly sensitive at all.</strong> Every configuration scores 100% (after rounding) on the same-session check. No setting in this grid closes the gap between seen and new sessions, because that gap is not a tuning problem: the training data contain only three recording conditions per writer.</li>
 </ul>
 <p>The chosen configuration (learning rate 0.0001, dropout 0.5) scored 56.1% on the test session. Given the seed check, we would expect the other configurations to perform within a few points of it.</p>
@@ -855,11 +870,11 @@ Table&nbsp;8: Effect of recording session on performance.
 </div>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-writer-pair-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;9: Writer 5 (left) and writer 13 (right) across their five sessions. The CNN labelled 198 of writer 5’s 250 session-5 images as writer 13.
+Figure&nbsp;10: Writer 5 (left) and writer 13 (right) across their five sessions. The CNN labelled 198 of writer 5’s 250 session-5 images as writer 13.
 </figcaption>
 </figure>
 </div>
-<p>The session change also explains the CNN’s worst errors. The model judged writer 5’s session-5 digits to be closer to writer 13 than to writer 5’s own training sessions (<a href="#fig-writer-pair" class="quarto-xref">Figure&nbsp;9</a>): 198 of writer 5’s 250 test images were labelled as writer 13, and 95 of writer 13’s images were labelled as writer 5. Writer 10’s session-5 writing was taken for writer 2 in 222 of 250 images. Which writers suffer depends on the session: writer 7 scores 30% in session 4 but 100% in session 5. When a writer’s style drifts towards someone else’s, the classifier assigns much of that session to the other person.</p>
+<p>The session change also explains the CNN’s worst errors. The model judged writer 5’s session-5 digits to be closer to writer 13 than to writer 5’s own training sessions (<a href="#fig-writer-pair" class="quarto-xref">Figure&nbsp;10</a>): 198 of writer 5’s 250 test images were labelled as writer 13, and 95 of writer 13’s images were labelled as writer 5. Writer 10’s session-5 writing was taken for writer 2 in 222 of 250 images. Which writers suffer depends on the session: writer 7 scores 30% in session 4 but 100% in session 5. When a writer’s style drifts towards someone else’s, the classifier assigns much of that session to the other person.</p>
 <p><strong>What would help.</strong> The notes suggest more varied training data. Here that means more sessions per writer, since three sessions are too few to learn what stays constant about a person, and possibly data augmentation (rotation, cropping) to imitate small changes in size and slant. Larger networks or longer training would not help: the training curves show the model already fits the training sessions almost perfectly.</p>
 <p><strong>Conclusion.</strong> The CNN identifies the writer of a single digit from a new session 56% of the time (chance 5%). The Siamese network matches pairs from unseen writers with 68% balanced accuracy (chance 50%). Digits 0 and 3 carry the most writer information for both models and digit 1 the least, although the exact ranking depends on the model. Changes between recording sessions are the main obstacle in this data: performance on familiar sessions is far higher than on new ones. Only splits that hold out whole sessions or writers reveal this.</p>
 </section>
