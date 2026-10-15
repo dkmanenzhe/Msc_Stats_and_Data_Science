@@ -1190,14 +1190,16 @@ We know that plagiarism is wrong. Plagiarism is to use another's work and preten
 
 Dakalo Manenzhe (MNNDAK002) and Troy Bisnath (BSNTRO001)
 
+::: {.content-visible when-format="pdf"}
 ## AI use statement
 
 We used generative AI tools in preparing this assignment, as follows.
 
-- **[Tool name], used by Dakalo:** [what it was used for].
+- **Claude (Anthropic), used by Dakalo:** reviewing and revising the analysis code, helping with the analysis write-up, and setting up GitHub Pages.
 - **Claude (Anthropic), used by Troy:** suggesting additional analyses, and help with the Git/GitHub workflow.
 
 All AI output was checked and edited by us. The analysis choices, interpretation of results and final text are our own, and we take full responsibility for the content of this report.
+:::
 
 ## Appendix A: code
 
