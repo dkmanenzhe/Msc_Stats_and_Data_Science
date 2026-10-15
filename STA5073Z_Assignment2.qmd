@@ -27,6 +27,7 @@ format:
         \usepackage{graphicx}
         \usepackage{float}
         \AtBeginDocument{\renewcommand{\maketitle}{}}
+        \renewcommand{\labelitemii}{$\circ$}
     include-before-body: titlepage.tex
     output-file: STA5073Z_Assignment2.pdf
 execute:
@@ -1197,7 +1198,11 @@ Date: 16 October 2026
 
 We used generative AI tools in preparing this assignment, as follows.
 
-- **Claude (Anthropic), used by Dakalo:** reviewing and revising the analysis code, helping with the analysis write-up, and setting up GitHub Pages.
+- **Claude (Anthropic), used by Dakalo:**
+    - *Code:* reviewing the analysis code and fixing errors I was getting. I checked the fixes by running   the code myself and confirming the errors were gone. I kept some of the revised code and suggestions.
+    - *Write-up:* proofreading and suggesting changes to the wording. I checked the text against the results and kept some of the suggested wording, after editing it.
+    
+    - *GitHub:* help with setting up GitHub Pages. I checked that the site builds and deploys.
 - **Claude (Anthropic), used by Troy:** reviewing the draft report against the brief, suggesting additional analyses, reviewing R code and help with the Git/GitHub workflow.
 
 All AI output was checked, run and edited by us. The analysis choices, interpretation of results and final text are our own, and we take full responsibility for the content of this report.

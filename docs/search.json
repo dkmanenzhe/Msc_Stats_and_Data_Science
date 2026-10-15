@@ -60,7 +60,7 @@
     "href": "index.html#ai-use-statement",
     "title": "STA5073Z (Data Science for Industry) Assignment 2",
     "section": "AI use statement",
-    "text": "AI use statement\nWe used generative AI tools in preparing this assignment, as follows.\n\nClaude (Anthropic), used by Dakalo: reviewing and revising the analysis code, helping with the analysis write-up, and setting up GitHub Pages.\nClaude (Anthropic), used by Troy: reviewing the draft report against the brief, suggesting additional analyses, reviewing R code and help with the Git/GitHub workflow.\n\nAll AI output was checked, run and edited by us. The analysis choices, interpretation of results and final text are our own, and we take full responsibility for the content of this report."
+    "text": "AI use statement\nWe used generative AI tools in preparing this assignment, as follows.\n\nClaude (Anthropic), used by Dakalo:\n\nCode: reviewing the analysis code and fixing errors I was getting. I checked the fixes by running the code myself and confirming the errors were gone. I kept some of the revised code and suggestions.\nWrite-up: proofreading and suggesting changes to the wording. I checked the text against the results and kept some of the suggested wording, after editing it.\nGitHub: help with setting up GitHub Pages. I checked that the site builds and deploys.\n\nClaude (Anthropic), used by Troy: reviewing the draft report against the brief, suggesting additional analyses, reviewing R code and help with the Git/GitHub workflow.\n\nAll AI output was checked, run and edited by us. The analysis choices, interpretation of results and final text are our own, and we take full responsibility for the content of this report."
   },
   {
     "objectID": "index.html#appendix-a-code",
