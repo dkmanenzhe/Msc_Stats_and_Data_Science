@@ -53,7 +53,14 @@
     "href": "index.html#plagiarism-declaration",
     "title": "STA5073Z (Data Science for Industry) Assignment 2",
     "section": "Plagiarism declaration",
-    "text": "Plagiarism declaration\nWe know that plagiarism is wrong. Plagiarism is to use another’s work and pretend that it is one’s own. We have used the required convention for citation and referencing: each contribution to, and quotation in, this assignment from the work of other people has been attributed and has been cited and referenced. This assignment is our own work. We have not allowed, and will not allow, anyone to copy our work with the intention of passing it off as their own work.\nDakalo Manenzhe (MNNDAK002) and Troy Bisnath (BSNTRO001)"
+    "text": "Plagiarism declaration\nWe know that plagiarism is wrong. Plagiarism is to use another’s work and pretend that it is one’s own. We have used the required convention for citation and referencing: each contribution to, and quotation in, this assignment from the work of other people has been attributed and has been cited and referenced. This assignment is our own work. We have not allowed, and will not allow, anyone to copy our work with the intention of passing it off as their own work.\nDakalo Manenzhe (MNNDAK002) and Troy Bisnath (BSNTRO001)\nDate: 16 October 2026"
+  },
+  {
+    "objectID": "index.html#ai-use-statement",
+    "href": "index.html#ai-use-statement",
+    "title": "STA5073Z (Data Science for Industry) Assignment 2",
+    "section": "AI use statement",
+    "text": "AI use statement\nWe used generative AI tools in preparing this assignment, as follows.\n\nClaude (Anthropic), used by Dakalo: reviewing and revising the analysis code, helping with the analysis write-up, and setting up GitHub Pages.\nClaude (Anthropic), used by Troy: reviewing the draft report against the brief, suggesting additional analyses, reviewing R code and help with the Git/GitHub workflow.\n\nAll AI output was checked, run and edited by us. The analysis choices, interpretation of results and final text are our own, and we take full responsibility for the content of this report."
   },
   {
     "objectID": "index.html#appendix-a-code",
