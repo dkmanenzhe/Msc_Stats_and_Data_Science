@@ -39,3 +39,4 @@ writer-identification-site/
 /writer_identification_report.qmd
 /docs/writer_identification_report.pdf
 /docs/writer_identification_report_files/
+*.Rproj
