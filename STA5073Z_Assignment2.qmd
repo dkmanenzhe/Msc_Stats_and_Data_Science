@@ -1210,7 +1210,7 @@ All AI output was checked, run and edited by us. The analysis choices, interpret
 
 ## Appendix A: code
 
-All results in this report come from the code below, which runs when the document is rendered. Methods follow the course notes (the CNN notes, slide decks 1--3 and the metric-learning notes).
+All results in this report come from the code below, which runs when the document is rendered. 
 
 ```{r show-code, ref.label=c("data", "cnn-train", "siamese-train"), echo=TRUE, eval=FALSE}
 #| code-fold: true

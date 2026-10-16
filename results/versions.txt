@@ -1,4 +1,4 @@
-R version 4.3.3 (2024-02-29)
-keras3 1.2.0
+R version 4.5.1 (2025-06-13 ucrt)
+keras3 1.5.1
 TensorFlow 2.21.0
 Keras 3.15.1
