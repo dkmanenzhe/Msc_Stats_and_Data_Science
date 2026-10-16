@@ -23,6 +23,8 @@ decides whether two digits were written by the same person, trained on 25,000 si
 | `images/` | Image grids, written by the report's code. |
 | `docs/` | The rendered website served by GitHub Pages (`index.html` is the home page). Do not edit by hand. |
 | `GIT_WORKFLOW.md` | How we work with branches, pull requests and GitHub Pages. |
+| `project-details.txt` | Group members and their roles, and the links to the website and repository. |
+| `README.md`, `README.txt` | This file, in Markdown and plain text. |
 
 ## Reproducing the report
 
@@ -33,10 +35,10 @@ installation for the PDF (for example `quarto install tinytex`).
 From a terminal in the repository folder:
 
 ```bash
-# Rebuild the website and PDF from the saved results (about a minute)
+# Rebuild the website and PDF from the saved results
 quarto render
 
-# Retrain every model from scratch, then rebuild (about 25 minutes on a laptop CPU)
+# Retrain every model from scratch, then rebuild
 quarto render -P retrain:true
 ```
 
